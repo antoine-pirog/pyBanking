@@ -1,0 +1,22 @@
+{
+    "LaBanquePostale":{
+        "accounts_overview_regexes" : {
+            "V2024": {
+                "start": "Situation de vos comptes",
+                "end": "Compte Courant Postal"
+            }
+        },
+        "main_operations_regexes" : {
+            "V2024": {
+                "start": "Compte Courant Postal n. \\d{2} \\d{3} \\d{2}[A-Z] \\d{3}",
+                "end": "Total des op.rations"
+            }
+        },
+        "detailed_listing_regexes" : {
+            "V2024": {
+                "start": "Carte VISA PREMIER",
+                "end": "Montant pr.lev. sur votre CCP"
+            }
+        }
+    }
+}
