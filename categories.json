@@ -5,11 +5,11 @@
       "name": "Abonnements",
       "description": "",
       "subcategories": [
-        { "id": 101, "name": "Abonnements - Autres", "description": "" },
-        { "id": 102, "name": "Câble / Satellite", "description": "" },
-        { "id": 103, "name": "Internet", "description": "" },
-        { "id": 104, "name": "Téléphonie fixe", "description": "" },
-        { "id": 105, "name": "Téléphonie mobile", "description": "" }
+        { "id": 101, "name": "Abonnements - Autres", "description": "", "ignore": false },
+        { "id": 102, "name": "Câble / Satellite", "description": "", "ignore": false },
+        { "id": 103, "name": "Internet", "description": "", "ignore": false },
+        { "id": 104, "name": "Téléphonie fixe", "description": "", "ignore": false },
+        { "id": 105, "name": "Téléphonie mobile", "description": "", "ignore": false }
       ]
     },
     {
@@ -17,16 +17,16 @@
       "name": "Achats & Shopping",
       "description": "",
       "subcategories": [
-        { "id": 201, "name": "Achats & Shopping - Autres", "description": "" },
-        { "id": 202, "name": "Articles de Sport", "description": "" },
-        { "id": 203, "name": "Cadeaux", "description": "" },
-        { "id": 204, "name": "Films & DVDs", "description": "" },
-        { "id": 205, "name": "High Tech", "description": "" },
-        { "id": 206, "name": "Licences", "description": "" },
-        { "id": 207, "name": "Livres", "description": "" },
-        { "id": 208, "name": "Musique", "description": "" },
-        { "id": 209, "name": "Vêtements / Chaussures", "description": "" },
-        { "id": 210, "name": "Jeux Vidéo", "description": "" }
+        { "id": 201, "name": "Achats & Shopping - Autres", "description": "", "ignore": false },
+        { "id": 202, "name": "Articles de Sport", "description": "", "ignore": false },
+        { "id": 203, "name": "Cadeaux", "description": "", "ignore": false },
+        { "id": 204, "name": "Films & DVDs", "description": "", "ignore": false },
+        { "id": 205, "name": "High Tech", "description": "", "ignore": false },
+        { "id": 206, "name": "Licences", "description": "", "ignore": false },
+        { "id": 207, "name": "Livres", "description": "", "ignore": false },
+        { "id": 208, "name": "Musique", "description": "", "ignore": false },
+        { "id": 209, "name": "Vêtements / Chaussures", "description": "", "ignore": false },
+        { "id": 210, "name": "Jeux Vidéo", "description": "", "ignore": false }
       ]
     },
     {
@@ -34,13 +34,13 @@
       "name": "Alimentation & Restaurants",
       "description": "",
       "subcategories": [
-        { "id": 301, "name": "Alimentation & Restaurants - Autres", "description": "" },
-        { "id": 302, "name": "Café", "description": "" },
-        { "id": 303, "name": "Snacks", "description": "" },
-        { "id": 304, "name": "Fast Foods", "description": "" },
-        { "id": 305, "name": "Restaurants", "description": "" },
-        { "id": 306, "name": "Supermarché / Épicerie", "description": "" },
-        { "id": 307, "name": "Petits Plaisirs", "description": "" }
+        { "id": 301, "name": "Alimentation & Restaurants - Autres", "description": "", "ignore": false },
+        { "id": 302, "name": "Café", "description": "", "ignore": false },
+        { "id": 303, "name": "Snacks", "description": "", "ignore": false },
+        { "id": 304, "name": "Fast Foods", "description": "", "ignore": false },
+        { "id": 305, "name": "Restaurants", "description": "", "ignore": false },
+        { "id": 306, "name": "Supermarché / Épicerie", "description": "", "ignore": false },
+        { "id": 307, "name": "Petits Plaisirs", "description": "", "ignore": false }
       ]
     },
     {
@@ -48,16 +48,16 @@
       "name": "Auto & Transports",
       "description": "",
       "subcategories": [
-        { "id": 401, "name": "Auto & Transports - Autres", "description": "" },
-        { "id": 402, "name": "Assurance véhicule", "description": "" },
-        { "id": 403, "name": "Billets d'avion", "description": "" },
-        { "id": 404, "name": "Billets de train", "description": "" },
-        { "id": 405, "name": "Carburant", "description": "" },
-        { "id": 406, "name": "Entretien véhicule", "description": "" },
-        { "id": 407, "name": "Location de véhicule", "description": "" },
-        { "id": 408, "name": "Péage", "description": "" },
-        { "id": 409, "name": "Stationnement", "description": "" },
-        { "id": 410, "name": "Transports en commun", "description": "" }
+        { "id": 401, "name": "Auto & Transports - Autres", "description": "", "ignore": false },
+        { "id": 402, "name": "Assurance véhicule", "description": "", "ignore": false },
+        { "id": 403, "name": "Billets d'avion", "description": "", "ignore": false },
+        { "id": 404, "name": "Billets de train/bus", "description": "", "ignore": false },
+        { "id": 405, "name": "Carburant", "description": "", "ignore": false },
+        { "id": 406, "name": "Entretien véhicule", "description": "", "ignore": false },
+        { "id": 407, "name": "Location de véhicule", "description": "", "ignore": false },
+        { "id": 408, "name": "Péage", "description": "", "ignore": false },
+        { "id": 409, "name": "Stationnement", "description": "", "ignore": false },
+        { "id": 410, "name": "Transports en commun", "description": "", "ignore": false }
       ]
     },
     {
@@ -65,14 +65,14 @@
       "name": "Banque & Services Financiers",
       "description": "",
       "subcategories": [
-        { "id": 501, "name": "Banque & Services Financiers - Autres", "description": "" },
-        { "id": 502, "name": "Débit mensuel carte", "description": "" },
-        { "id": 503, "name": "Épargne", "description": "" },
-        { "id": 504, "name": "Frais bancaires", "description": "" },
-        { "id": 505, "name": "Hypothèque", "description": "" },
-        { "id": 506, "name": "Incidents de paiement", "description": "" },
-        { "id": 507, "name": "Remboursement emprunt", "description": "" },
-        { "id": 508, "name": "Services bancaires", "description": "" }
+        { "id": 501, "name": "Banque & Services Financiers - Autres", "description": "", "ignore": false },
+        { "id": 502, "name": "Débit mensuel carte", "description": "", "ignore": true },
+        { "id": 503, "name": "Épargne", "description": "", "ignore": false },
+        { "id": 504, "name": "Frais bancaires", "description": "", "ignore": false },
+        { "id": 505, "name": "Hypothèque", "description": "", "ignore": false },
+        { "id": 506, "name": "Incidents de paiement", "description": "", "ignore": false },
+        { "id": 507, "name": "Remboursement emprunt", "description": "", "ignore": false },
+        { "id": 508, "name": "Services bancaires", "description": "", "ignore": false }
       ]
     },
     {
@@ -80,12 +80,12 @@
       "name": "Divers",
       "description": "",
       "subcategories": [
-        { "id": 601, "name": "À catégoriser", "description": "" },
-        { "id": 602, "name": "Assurance", "description": "" },
-        { "id": 603, "name": "Autres dépenses", "description": "" },
-        { "id": 604, "name": "Dons", "description": "" },
-        { "id": 605, "name": "Pressing", "description": "" },
-        { "id": 606, "name": "Tabac", "description": "" }
+        { "id": 601, "name": "À catégoriser", "description": "", "ignore": false },
+        { "id": 602, "name": "Assurance", "description": "", "ignore": false },
+        { "id": 603, "name": "Autres dépenses", "description": "", "ignore": false },
+        { "id": 604, "name": "Dons", "description": "", "ignore": false },
+        { "id": 605, "name": "Pressing", "description": "", "ignore": false },
+        { "id": 606, "name": "Tabac", "description": "", "ignore": false }
       ]
     },
     {
@@ -93,25 +93,25 @@
       "name": "Dépenses pro",
       "description": "",
       "subcategories": [
-        { "id": 701, "name": "Dépenses pro - Autres", "description": "" },
-        { "id": 702, "name": "Comptabilité", "description": "" },
-        { "id": 703, "name": "Conseils", "description": "" },
-        { "id": 704, "name": "Cotisations Sociales", "description": "" },
-        { "id": 705, "name": "Fournitures de bureau", "description": "" },
-        { "id": 706, "name": "Frais d'expédition", "description": "" },
-        { "id": 707, "name": "Frais d'impression", "description": "" },
-        { "id": 708, "name": "Frais de recrutement", "description": "" },
-        { "id": 709, "name": "Frais juridiques", "description": "" },
-        { "id": 710, "name": "Maintenance bureaux", "description": "" },
-        { "id": 711, "name": "Marketing", "description": "" },
-        { "id": 712, "name": "Notes de frais", "description": "" },
-        { "id": 713, "name": "Prévoyance", "description": "" },
-        { "id": 714, "name": "Publicité", "description": "" },
-        { "id": 715, "name": "Rémunération dirigeants", "description": "" },
-        { "id": 716, "name": "Salaires", "description": "" },
-        { "id": 717, "name": "Services en ligne", "description": "" },
-        { "id": 718, "name": "Sous-traitance", "description": "" },
-        { "id": 719, "name": "Taxe d'apprentissage", "description": "" }
+        { "id": 701, "name": "Dépenses pro - Autres", "description": "", "ignore": false },
+        { "id": 702, "name": "Comptabilité", "description": "", "ignore": false },
+        { "id": 703, "name": "Conseils", "description": "", "ignore": false },
+        { "id": 704, "name": "Cotisations Sociales", "description": "", "ignore": false },
+        { "id": 705, "name": "Fournitures de bureau", "description": "", "ignore": false },
+        { "id": 706, "name": "Frais d'expédition", "description": "", "ignore": false },
+        { "id": 707, "name": "Frais d'impression", "description": "", "ignore": false },
+        { "id": 708, "name": "Frais de recrutement", "description": "", "ignore": false },
+        { "id": 709, "name": "Frais juridiques", "description": "", "ignore": false },
+        { "id": 710, "name": "Maintenance bureaux", "description": "", "ignore": false },
+        { "id": 711, "name": "Marketing", "description": "", "ignore": false },
+        { "id": 712, "name": "Notes de frais", "description": "", "ignore": false },
+        { "id": 713, "name": "Prévoyance", "description": "", "ignore": false },
+        { "id": 714, "name": "Publicité", "description": "", "ignore": false },
+        { "id": 715, "name": "Rémunération dirigeants", "description": "", "ignore": false },
+        { "id": 716, "name": "Salaires", "description": "", "ignore": false },
+        { "id": 717, "name": "Services en ligne", "description": "", "ignore": false },
+        { "id": 718, "name": "Sous-traitance", "description": "", "ignore": false },
+        { "id": 719, "name": "Taxe d'apprentissage", "description": "", "ignore": false }
       ]
     },
     {
@@ -119,11 +119,11 @@
       "name": "Esthétique & Soins",
       "description": "",
       "subcategories": [
-        { "id": 801, "name": "Esthétique & Soins - Autres", "description": "" },
-        { "id": 802, "name": "Coiffeur", "description": "" },
-        { "id": 803, "name": "Cosmétique", "description": "" },
-        { "id": 804, "name": "Esthétique", "description": "" },
-        { "id": 805, "name": "Spa & Massage", "description": "" }
+        { "id": 801, "name": "Esthétique & Soins - Autres", "description": "", "ignore": false },
+        { "id": 802, "name": "Coiffeur", "description": "", "ignore": false },
+        { "id": 803, "name": "Cosmétique", "description": "", "ignore": false },
+        { "id": 804, "name": "Esthétique", "description": "", "ignore": false },
+        { "id": 805, "name": "Spa & Massage", "description": "", "ignore": false }
       ]
     },
     {
@@ -131,12 +131,12 @@
       "name": "Impôts & Taxes",
       "description": "",
       "subcategories": [
-        { "id": 901, "name": "Impôts & Taxes - Autres", "description": "" },
-        { "id": 902, "name": "Amendes", "description": "" },
-        { "id": 903, "name": "Impôts fonciers", "description": "" },
-        { "id": 904, "name": "Impôt sur le revenu", "description": "" },
-        { "id": 905, "name": "TVA", "description": "" },
-        { "id": 906, "name": "Taxes", "description": "" }
+        { "id": 901, "name": "Impôts & Taxes - Autres", "description": "", "ignore": false },
+        { "id": 902, "name": "Amendes", "description": "", "ignore": false },
+        { "id": 903, "name": "Impôts fonciers", "description": "", "ignore": false },
+        { "id": 904, "name": "Impôt sur le revenu", "description": "", "ignore": false },
+        { "id": 905, "name": "TVA", "description": "", "ignore": false },
+        { "id": 906, "name": "Taxes", "description": "", "ignore": false }
       ]
     },
     {
@@ -144,16 +144,17 @@
       "name": "Logement",
       "description": "",
       "subcategories": [
-        { "id": 1001, "name": "Logement - Autres", "description": "" },
-        { "id": 1002, "name": "Assurance habitation", "description": "" },
-        { "id": 1003, "name": "Charges diverses", "description": "" },
-        { "id": 1004, "name": "Décoration", "description": "" },
-        { "id": 1005, "name": "Eau", "description": "" },
-        { "id": 1006, "name": "Électricité", "description": "" },
-        { "id": 1007, "name": "Entretien", "description": "" },
-        { "id": 1008, "name": "Extérieur et jardin", "description": "" },
-        { "id": 1009, "name": "Gaz", "description": "" },
-        { "id": 1010, "name": "Loyer", "description": "" }
+        { "id": 1001, "name": "Logement - Autres", "description": "", "ignore": false },
+        { "id": 1002, "name": "Assurance habitation", "description": "", "ignore": false },
+        { "id": 1003, "name": "Charges diverses", "description": "", "ignore": false },
+        { "id": 1004, "name": "Décoration", "description": "", "ignore": false },
+        { "id": 1005, "name": "Eau", "description": "", "ignore": false },
+        { "id": 1006, "name": "Électricité", "description": "", "ignore": false },
+        { "id": 1007, "name": "Entretien", "description": "", "ignore": false },
+        { "id": 1008, "name": "Extérieur et jardin", "description": "", "ignore": false },
+        { "id": 1009, "name": "Gaz", "description": "", "ignore": false },
+        { "id": 1010, "name": "Loyer", "description": "", "ignore": false },
+        { "id": 1011, "name": "Cuisine / Electroménager", "description": "", "ignore": false}
       ]
     },
     {
@@ -161,17 +162,17 @@
       "name": "Loisirs & Sorties",
       "description": "",
       "subcategories": [
-        { "id": 1101, "name": "Loisirs & Sorties - Autres", "description": "" },
-        { "id": 1102, "name": "Bars / Clubs", "description": "" },
-        { "id": 1103, "name": "Divertissements", "description": "" },
-        { "id": 1104, "name": "Frais Animaux", "description": "" },
-        { "id": 1105, "name": "Hobbies", "description": "" },
-        { "id": 1106, "name": "Hôtels", "description": "" },
-        { "id": 1107, "name": "Sortie au restaurant", "description": "" },
-        { "id": 1108, "name": "Sorties culturelles", "description": "" },
-        { "id": 1109, "name": "Sport", "description": "" },
-        { "id": 1110, "name": "Sports d'hiver", "description": "" },
-        { "id": 1111, "name": "Voyages / Vacances", "description": "" }
+        { "id": 1101, "name": "Loisirs & Sorties - Autres", "description": "", "ignore": false },
+        { "id": 1102, "name": "Bars / Clubs", "description": "", "ignore": false },
+        { "id": 1103, "name": "Divertissements", "description": "", "ignore": false },
+        { "id": 1104, "name": "Frais Animaux", "description": "", "ignore": false },
+        { "id": 1105, "name": "Hobbies", "description": "", "ignore": false },
+        { "id": 1106, "name": "Hôtels", "description": "", "ignore": false },
+        { "id": 1107, "name": "Sortie au restaurant", "description": "", "ignore": false },
+        { "id": 1108, "name": "Sorties culturelles", "description": "", "ignore": false },
+        { "id": 1109, "name": "Sport", "description": "", "ignore": false },
+        { "id": 1110, "name": "Sports d'hiver", "description": "", "ignore": false },
+        { "id": 1111, "name": "Voyages / Vacances", "description": "", "ignore": false }
       ]
     },
     {
@@ -179,14 +180,14 @@
       "name": "Santé",
       "description": "",
       "subcategories": [
-        { "id": 1201, "name": "Santé - Autres", "description": "" },
-        { "id": 1202, "name": "Dentiste", "description": "" },
-        { "id": 1203, "name": "Mutuelle", "description": "" },
-        { "id": 1204, "name": "Médecin", "description": "" },
-        { "id": 1205, "name": "Opticien / Ophtalmo", "description": "" },
-        { "id": 1206, "name": "Pharmacie", "description": "" },
-        { "id": 1207, "name": "Psychologue", "description": "" },
-        { "id": 1208, "name": "Soins médicaux", "description": "" }
+        { "id": 1201, "name": "Santé - Autres", "description": "", "ignore": false },
+        { "id": 1202, "name": "Dentiste", "description": "", "ignore": false },
+        { "id": 1203, "name": "Mutuelle", "description": "", "ignore": false },
+        { "id": 1204, "name": "Médecin", "description": "", "ignore": false },
+        { "id": 1205, "name": "Opticien / Ophtalmo", "description": "", "ignore": false },
+        { "id": 1206, "name": "Pharmacie", "description": "", "ignore": false },
+        { "id": 1207, "name": "Psychologue", "description": "", "ignore": false },
+        { "id": 1208, "name": "Soins médicaux", "description": "", "ignore": false }
       ]
     },
     {
@@ -194,14 +195,14 @@
       "name": "Scolarité & Enfants",
       "description": "",
       "subcategories": [
-        { "id": 1301, "name": "Scolarité & Enfants - Autres", "description": "" },
-        { "id": 1302, "name": "Baby-sitters & Crèches", "description": "" },
-        { "id": 1303, "name": "École", "description": "" },
-        { "id": 1304, "name": "Fournitures scolaires", "description": "" },
-        { "id": 1305, "name": "Jouets", "description": "" },
-        { "id": 1306, "name": "Logement étudiant", "description": "" },
-        { "id": 1307, "name": "Pensions", "description": "" },
-        { "id": 1308, "name": "Prêt étudiant", "description": "" }
+        { "id": 1301, "name": "Scolarité & Enfants - Autres", "description": "", "ignore": false },
+        { "id": 1302, "name": "Baby-sitters & Crèches", "description": "", "ignore": false },
+        { "id": 1303, "name": "École", "description": "", "ignore": false },
+        { "id": 1304, "name": "Fournitures scolaires", "description": "", "ignore": false },
+        { "id": 1305, "name": "Jouets", "description": "", "ignore": false },
+        { "id": 1306, "name": "Logement étudiant", "description": "", "ignore": false },
+        { "id": 1307, "name": "Pensions", "description": "", "ignore": false },
+        { "id": 1308, "name": "Prêt étudiant", "description": "", "ignore": false }
       ]
     }
   ]

@@ -66,8 +66,6 @@ def tofloat(dirty_text):
     return float(clean_text)
 
 def reformat(dirty_text, pattern, ignored_chars=None):
-    """  """
-
     """ Check compatibility """
     unsupported_chars = [".", "+", "*"]
     for char in unsupported_chars:

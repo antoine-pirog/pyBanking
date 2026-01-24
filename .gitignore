@@ -4,3 +4,4 @@ __pycache__/
 venv/*
 dev/*
 database.db
+secrets.json
