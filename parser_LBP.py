@@ -1,4 +1,5 @@
-import PyPDF2 as pdf
+import pymupdf
+
 import re
 import json
 
@@ -22,10 +23,11 @@ ACCOUNTS_OVERVIEW_RE = 'accounts_overview_regexes'
 MAIN_OPERATIONS_RE   = 'main_operations_regexes'
 
 def load_pdf_statement(path_to_file):
-    with open(path_to_file, 'rb') as fid:
-        reader = pdf.PdfReader(fid)
-        reader.decrypt('')
-        text = "\n".join(page.extract_text() for page in reader.pages)
+    doc = pymupdf.open(path_to_file)
+    doc.authenticate('')
+    text = ""
+    for page in doc:
+        text += page.get_text()
     return text
 
 def parse_file(text):
