@@ -80,6 +80,7 @@ def parse_main_operations(text, verbose=False):
     patterns_to_strip = [
         r"IBAN  : .+? BIC :  [A-Z]+"
         r"> D.couvert autoris. au \d{2}\/\d{2}\/\d{4} .+? utilisation effective du d.couvert\.",
+        r"D.couvert autoris. au \d{2}\/\d{2}\/\d{4} .+? r.gulariser sous 30 jours\)",
         r"> Avantage FORMULE DE COMPTE .+? sont pas factur.s. \(Seuil  en vigueur  au \d{2}\/\d{2}\/\d{4}\)",
         r"Ancien solde au \d{2}\/\d{2}\/\d{4} \d+,\d{1,2}",
         r"Relev.  n. \d+ .+? \(suite\)",
