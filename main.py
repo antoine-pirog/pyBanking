@@ -196,6 +196,24 @@ def edit_entry_by_id(db, args):
     print("| " + _format_row(db.get_by_id(entry_id)))
     print(f"+-------------------------------------------------")
 
+def search_text(db, args):
+    text, = args
+    print(f"+-------------------------------------------------")
+    print(f"| Searching pattern '{text}'")
+    idx = 1
+    matches = []
+    while True:
+        entry = db.get_by_id(idx)
+        if not entry:
+            break # end of db reached
+        transaction = DbTransaction(entry)
+        if text.lower() in transaction.label.lower():
+            matches.append(entry)
+        idx += 1
+    print(f"| {len(matches)} found :")
+    for match in matches:
+        print("|   " + _format_row(match))
+    print(f"+-------------------------------------------------")
 
 if __name__ == "__main__":
     import argparse
@@ -269,6 +287,7 @@ if __name__ == "__main__":
                 r"show +date +after +(\d{1,2}\/\d{1,2}\/\d{4})" : show_date_after,
                 r"show +(\d+)" : show_entry_by_id,
                 r"edit +(\d+)" : edit_entry_by_id,
+                r"search +(.+)" : search_text,
             }
             for regex in regexes:
                 match = re.compile(regex).match(cmd)
