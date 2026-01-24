@@ -57,4 +57,7 @@ class Database:
         self.conn.execute(f"UPDATE {table} SET {field} = {value} WHERE id = {id}")
     
     def get_by_id(self, id):
-        return self.conn.execute(f"SELECT * FROM transactions WHERE id = {id}").fetchall()[0]
+        try :
+            return self.conn.execute(f"SELECT * FROM transactions WHERE id = {id}").fetchall()[0]
+        except IndexError:
+            return None
