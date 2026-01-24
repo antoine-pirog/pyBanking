@@ -35,6 +35,39 @@ def parse_file(text):
     main_operations = parse_main_operations(text)
     detail = parse_detailed_listing(text)
 
+def parse_tabular_data(text):
+    lines = []
+    date, label, amount = None, None, None
+    STEP_OTHER  = 0
+    STEP_DATE   = 1
+    STEP_LABEL  = 2
+    STEP_AMOUNT = 3
+    step = STEP_OTHER
+    for line in text.splitlines():
+        if (step == STEP_OTHER) or (step == STEP_AMOUNT) :
+            if re.compile(r"\d{2}\/\d{2}").match(line.strip()):
+                # if date detected : start cycle
+                step = STEP_DATE
+                date = line.strip()
+            else:
+                step = STEP_OTHER
+        elif step == STEP_DATE :
+            # after date, except first label line
+            step = STEP_LABEL
+            label = line.strip()
+        elif step == STEP_LABEL :
+            # after a label, expect either another label line or an amount
+            if re.compile(r"\d+,\d{2}").match(line.replace(" ", "").strip()):
+                # if amount detected, record and commit line
+                step = STEP_AMOUNT
+                amount = line.strip()
+                lines.append((date, label, amount))
+            else:
+                # otherwise, this is another label line
+                step = STEP_LABEL
+                label += " " + line.strip()
+    return lines
+
 def parse_accounts_overview(text, verbose=False):
     """ Get span of accounts overview """
     pattern_start = statement_tags[statement_bank][ACCOUNTS_OVERVIEW_RE][statement_file_version]['start']
@@ -75,38 +108,7 @@ def parse_main_operations(text, verbose=False):
         ignore_chars=IGNORE_CHARS
     )
 
-    """ fsm to parse tabular data """
-
-    lines = []
-    date, label, amount = None, None, None
-    STEP_OTHER  = 0
-    STEP_DATE   = 1
-    STEP_LABEL  = 2
-    STEP_AMOUNT = 3
-    step = STEP_OTHER
-    for line in operations_raw.splitlines():
-        if (step == STEP_OTHER) or (step == STEP_AMOUNT) :
-            if re.compile(r"\d{2}\/\d{2}").match(line.strip()):
-                # if date detected : start cycle
-                step = STEP_DATE
-                date = line.strip()
-            else:
-                step = STEP_OTHER
-        elif step == STEP_DATE :
-            # after date, except first label line
-            step = STEP_LABEL
-            label = line.strip()
-        elif step == STEP_LABEL :
-            # after a label, expect either another label line or an amount
-            if re.compile(r"\d+,\d{2}").match(line.replace(" ", "").strip()):
-                # if amount detected, record and commit line
-                step = STEP_AMOUNT
-                amount = line.strip()
-                lines.append((date, label, amount))
-            else:
-                # otherwise, this is another label line
-                step = STEP_LABEL
-                label += " " + line.strip()
+    lines = parse_tabular_data(operations_raw)
 
     """ Extract table """
     table = []
@@ -150,18 +152,18 @@ def parse_detailed_listing(text, verbose=False):
         end_tag=pattern_end,
         ignore_chars=IGNORE_CHARS
     )
+    
+    lines = parse_tabular_data(detail_raw)
 
-    """ Extract table """
-    re_table = re.compile(r"(\d{2}\/\d{2})(.+?)(\d+,\d{1,2})")
-
-    table = re_table.findall(detail_raw)
-
-    for i,line in enumerate(table):
-        table[i] = Transaction(
-            date=line[0].strip(), 
-            label=line[1].strip(), 
-            amount=-tofloat(line[2])
+    table = []
+    for i,line in enumerate(lines):
+        date, label, amount = line
+        table.append(Transaction(
+            date = date, 
+            label = label, 
+            amount = -tofloat(amount)
             )
+        )
     
     """ Update dates """
     dates = [transaction.date for transaction in table]
