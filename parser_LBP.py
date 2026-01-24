@@ -75,92 +75,66 @@ def parse_main_operations(text, verbose=False):
         ignore_chars=IGNORE_CHARS
     )
 
-    """ Preprocess raw text """
-    operations_raw = operations_raw.replace('\n', ' ')
+    """ fsm to parse tabular data """
 
-    """ Strip unnecessary parts """
-    patterns_to_strip = [
-        r"IBAN  : .+? BIC :  [A-Z]+"
-        r"> D.couvert autoris. au \d{2}\/\d{2}\/\d{4} .+? utilisation effective du d.couvert\.",
-        r"D.couvert autoris. au \d{2}\/\d{2}\/\d{4} .+? r.gulariser sous 30 jours\)",
-        r"> Avantage FORMULE DE COMPTE .+? sont pas factur.s. \(Seuil  en vigueur  au \d{2}\/\d{2}\/\d{4}\)",
-        r"Ancien solde au \d{2}\/\d{2}\/\d{4} \d+,\d{1,2}",
-        r"Relev.  n. \d+ .+? \(suite\)",
-        r"> Frais et cotisations .+? \d{2}\/\d{2}\/\d{4} .+? \d+,\d{1,2}",
-    ]
-    for pattern in patterns_to_strip:
-        matches_pattern = regex_ignore_chars(pattern, operations_raw, chars=IGNORE_CHARS)
-        if matches_pattern:
-            # print(f"Matched strip pattern: {pattern}")
-            for match_pattern in matches_pattern:
-                operations_raw = operations_raw[:match_pattern.start] + operations_raw[match_pattern.end:]
-
-    # dump_text(operations_raw.replace('\n', ' '), destination="dev/main_operations_extracted.txt")
-
-    """ Extract table lines """
-    lines = re.compile(r"\d{2}\/\d{2}.*?,\d{1,2}").findall(operations_raw)
-
-    """ Detect special fields and replace them with correct formatting """
-    special_fields_patterns = [
-        *secrets["main_operations"]["debit_mandates"],
-        r"REFERENCE : \S{16}",
-        r"CARTE NUMERO \d{3}",
-        r"\d{2}\/\d{2}\/\d{4}",
-        r"\d{2}\/\d{4}",
-    ]
-
-    for i,line in enumerate(lines):
-        # print(line)
-        for pattern in special_fields_patterns:
-            matches_pattern = regex_ignore_chars(pattern, line, chars=IGNORE_CHARS)
-            if matches_pattern:
-                for match_pattern in matches_pattern[::-1]: # Reverse to not mess up indices
-                    original_text = line[match_pattern.start:match_pattern.end]
-                    corrected_text = reformat(original_text, pattern, IGNORE_CHARS) + " "
-                    line = line[:match_pattern.start] + corrected_text + ";" + line[match_pattern.end:]
-        lines[i] = line
+    lines = []
+    date, label, amount = None, None, None
+    STEP_OTHER  = 0
+    STEP_DATE   = 1
+    STEP_LABEL  = 2
+    STEP_AMOUNT = 3
+    step = STEP_OTHER
+    for line in operations_raw.splitlines():
+        if (step == STEP_OTHER) or (step == STEP_AMOUNT) :
+            if re.compile(r"\d{2}\/\d{2}").match(line.strip()):
+                # if date detected : start cycle
+                step = STEP_DATE
+                date = line.strip()
+            else:
+                step = STEP_OTHER
+        elif step == STEP_DATE :
+            # after date, except first label line
+            step = STEP_LABEL
+            label = line.strip()
+        elif step == STEP_LABEL :
+            # after a label, expect either another label line or an amount
+            if re.compile(r"\d+,\d{2}").match(line.replace(" ", "").strip()):
+                # if amount detected, record and commit line
+                step = STEP_AMOUNT
+                amount = line.strip()
+                lines.append((date, label, amount))
+            else:
+                # otherwise, this is another label line
+                step = STEP_LABEL
+                label += " " + line.strip()
 
     """ Extract table """
     table = []
     for line in lines:
-        entry_with_reference = re.compile(r"(\d{2}\/\d{2}) *?(VIREMENT.+?REFERENCE : \d{16}) *?([\d+]? *[\d+]? *\d+,\d{1,2})").search(line)
-        entry_generic = re.compile(r"(\d{2}\/\d{2}) *?(.+?) *?([\d+]? *[\d+]? *\d+,\d{1,2})").search(line)
-        if entry_with_reference:
-            # print(f"Matched entry with reference: {line}")
-            entry = entry_with_reference
+        date, label, amount = line
+        if re.compile(r"versement.+").match(label.lower()):
+            amount = tofloat(amount)
+        elif re.compile(r"prelevement.+").match(label.lower()):
+            amount = -tofloat(amount)
+        elif re.compile(r"virement de.+").match(label.lower()):
+            amount = tofloat(amount)
+        elif re.compile(r"virement pour.+").match(label.lower()):
+            amount = -tofloat(amount)
+        elif re.compile(r"virement permanent pour.+").match(label.lower()):
+            amount = -tofloat(amount)
         else:
-            entry = entry_generic
-        # print(line)
-        if entry:
-            matched_date = entry.group(1).strip()
-            matched_description = entry.group(2).strip()
-            matched_amount = entry.group(3).strip().replace(",", ".")
-            if "versement" in matched_description.lower():
-                matched_amount = tofloat(matched_amount)
-            elif "prelevement" in matched_description.lower():
-                matched_amount = -tofloat(matched_amount)
-            elif "virement de" in matched_description.lower():
-                matched_amount = tofloat(matched_amount)
-            elif "virement pour" in matched_description.lower():
-                matched_amount = -tofloat(matched_amount)
-            elif "virement permanent pour" in matched_description.lower():
-                matched_amount = -tofloat(matched_amount)
-            else:
-                matched_amount = tofloat(matched_amount)
-            table.append(Transaction(
-                date=matched_date, 
-                label=matched_description, 
-                amount=matched_amount)
-                )
+            amount = tofloat(amount)
+        table.append(Transaction(
+            date=date, 
+            label=label, 
+            amount=amount)
+            )
 
     """ Update dates """
     dates = [transaction.date for transaction in table]
     dates = update_dates(dates, text)
     for transaction, date in zip(table, dates):
         transaction.date = date
-
-    # for line in table:
-    #     print(line)
 
     return table
 
