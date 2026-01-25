@@ -323,6 +323,17 @@ def input_int(prompt, retry_message="Must input integer."):
             print(retry_message)
             pass
 
+def input_float(prompt, retry_message="Must input float."):
+    while True:
+        try:
+            strvalue = input(prompt)
+            if strvalue == "":
+                return None
+            return float(strvalue)
+        except:
+            print(retry_message)
+            pass
+
 def fix_date(datestr):
     return re.compile(r"(\d{1,2})-(\d{1,2})-(\d{4})").sub(r"\3-\2-\1", datestr)
 
@@ -346,7 +357,7 @@ def edit_entry_by_id(db, args):
     print(f"| Leave fields blank to leave unchanged.")
     print( "| New label : ")           ; updated_label       = input_text("| > ").strip()
     print( "| New date : ")            ; updated_date        = input_text("| > ").strip()
-    print( "| New amount : ")          ; updated_amount      = input_int("| > ", retry_message="| Must input integer.")
+    print( "| New amount : ")          ; updated_amount      = input_float("| > ", retry_message="| Must input integer.")
     print( "| New category idx : ")    ; updated_category    = input_int("| > ", retry_message="| Must input integer.")
     print( "| New subcategory idx : ") ; updated_subcategory = input_int("| > ", retry_message="| Must input integer.")
     print( "| New ignore flag : ")     ; updated_ignore      = input_int("| > ", retry_message="| Must input integer.")
