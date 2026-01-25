@@ -102,6 +102,7 @@ def cmd_lookup(db, command):
         r"show year +(\d{4})" : show_year,
         r"show buffered" : show_buffered,
         r"show (\d+)" : show_entry_by_id,
+        r"edit buffered" : edit_buffered_entries,
         r"edit (\d+)" : edit_entry_by_id,
         r"search (.+)" : search_text,
         r"sql (.+)" : execute_sql_request,
@@ -405,6 +406,38 @@ def edit_entry_by_id(db, args):
     print("| Edited :")
     print("| " + _format_row(db.get_by_id(entry_id)))
     print(f"+-------------------------------------------------")
+
+def edit_buffered_entries(db, args=None):
+    global BUFFERED
+    show_buffered()
+    print(f"| Leave fields blank to leave unchanged.")
+    print( "| New label : ")           ; updated_label       = input_text("| > ").strip()
+    print( "| New date : ")            ; updated_date        = input_text("| > ").strip()
+    print( "| New amount : ")          ; updated_amount      = input_float("| > ", retry_message="| Must input integer.")
+    print( "| New category idx : ")    ; updated_category    = input_int("| > ", retry_message="| Must input integer.")
+    print( "| New subcategory idx : ") ; updated_subcategory = input_int("| > ", retry_message="| Must input integer.")
+    print( "| New ignore flag : ")     ; updated_ignore      = input_int("| > ", retry_message="| Must input integer.")
+    print(f"+-------------------------------------------------")
+    for entry in BUFFERED:
+        transaction = DbTransaction(entry)
+        entry_id = transaction.id
+        # Handle updates to do
+        updated_this_label = transaction.label if updated_label == "" else updated_label
+        updated_this_date = transaction.date if updated_date == "" else updated_date
+        updated_this_amount = transaction.amount if updated_amount is None else updated_amount
+        updated_this_category = transaction.category if updated_category is None else updated_category
+        updated_this_subcategory = transaction.subcategory if updated_subcategory is None else updated_subcategory
+        updated_this_ignore = transaction.ignore if updated_ignore is None else updated_ignore
+        # Update in db
+        db.update_row(entry_id, "transactions", "label", '"' + updated_this_label + '"')
+        db.update_row(entry_id, "transactions", "date", '"' + updated_this_date + '"')
+        db.update_row(entry_id, "transactions", "amount", updated_this_amount)
+        db.update_row(entry_id, "transactions", "category", updated_this_category)
+        db.update_row(entry_id, "transactions", "subcategory", updated_this_subcategory)
+        db.update_row(entry_id, "transactions", "ignore", updated_this_ignore)
+    # Commit changes (TODO : ask for confirmation before committing ...)
+    db.commit()
+
 
 def search_text(db, args):
     text, = args
