@@ -258,6 +258,8 @@ def show_date_between(db, args):
     rows = [row for row in rows if not row[1].startswith("?")] # Exclude undefined dates
     for row in rows :
         print(_format_row(row))
+    print()
+    print_categorized_expenses(rows)
 
 def show_date_before(db, args):
     date0, = args
@@ -266,6 +268,8 @@ def show_date_before(db, args):
     rows = [row for row in rows if not row[1].startswith("?")] # Exclude undefined dates
     for row in rows :
         print(_format_row(row))
+    print()
+    print_categorized_expenses(rows)
 
 def show_date_after(db, args):
     date0, = args
@@ -274,6 +278,8 @@ def show_date_after(db, args):
     rows = [row for row in rows if not row[1].startswith("?")] # Exclude undefined dates
     for row in rows :
         print(_format_row(row))
+    print()
+    print_categorized_expenses(rows)
 
 def input_text(prompt):
     return input(prompt)
