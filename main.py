@@ -15,6 +15,7 @@ if __name__ == "__main__":
     import argparse
     import glob
     import re
+    import cli
 
     parser = argparse.ArgumentParser(description='Manage and monitor finances and expenses.')
     parser.add_argument('-f', '--files', type=str  , help='Input statement files (pdf)')
@@ -60,14 +61,13 @@ if __name__ == "__main__":
                 db.insert(dbtransaction)
     
     if args.update_uncategorized:
-        update_uncategorized(db)
+        cli.update_uncategorized(db)
 
     if args.show_uncategorized:
-        show_uncategorized(db)
+        cli.show_uncategorized(db)
     
     if args.interactive:
-        from cli import CLI
-        CLI_handle = CLI()
+        CLI_handle = cli.CLI()
         CLI_handle.link_db(db)
         CLI_handle.cmdloop()
 
