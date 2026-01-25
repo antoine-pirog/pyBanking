@@ -40,7 +40,7 @@ class Database:
         self.cursor.execute(
             "INSERT INTO transactions (date, label, amount, category, subcategory, ignore) VALUES (?, ?, ?, ?, ?, ?)",
             (
-                transaction.date, 
+                transaction.date.replace("/","-"), 
                 transaction.label, 
                 transaction.amount, 
                 transaction.category, 

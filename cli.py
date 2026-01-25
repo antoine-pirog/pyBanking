@@ -91,9 +91,9 @@ def cmd_lookup(db, command):
         r"show where +(.+)" : show_where_custom_query,
         r"show categories" : show_categories,
         r"show uncategorized" : show_uncategorized,
-        r"show date +between +(\d{1,2}\/\d{1,2}\/\d{4})-(\d{1,2}\/\d{1,2}\/\d{4})" : show_date_between,
-        r"show date +before +(\d{1,2}\/\d{1,2}\/\d{4})" : show_date_before,
-        r"show date +after +(\d{1,2}\/\d{1,2}\/\d{4})" : show_date_after,
+        r"show date +between +(\d{1,2}-\d{1,2}-\d{4}):(\d{1,2}-\d{1,2}-\d{4})" : show_date_between,
+        r"show date +before +(\d{1,2}-\d{1,2}-\d{4})" : show_date_before,
+        r"show date +after +(\d{1,2}-\d{1,2}-\d{4})" : show_date_after,
         r"show (\d+)" : show_entry_by_id,
         r"edit (\d+)" : edit_entry_by_id,
         r"search (.+)" : search_text,
@@ -118,12 +118,12 @@ class CLI(cmd.Cmd):
             | - show all
             | - show uncategorized
             | - show categories
-            | - show date after <dd/mm/yyyy> 
-            |   > ex. : show date after 01/01/2024
-            | - show date before <dd/mm/yyyy>
-            |   > ex. : show date before 01/01/2024
-            | - show date between <dd/mm/yyyy-dd/mm/yyyy>
-            |   > ex. : show date afte between 01/01/2024-31/12/2025
+            | - show date after <dd-mm-yyyy> 
+            |   > ex. : show date after 01-01-2024
+            | - show date before <dd-mm-yyyy>
+            |   > ex. : show date before 01-01-2024
+            | - show date between <dd-mm-yyyy:dd-mm-yyyy>
+            |   > ex. : show date afte between 01-01-2024:31-12-2025
             | - show where <sql filter>
             |   > ex. : show where amount < -1000
             |   > columns in db are :
@@ -234,7 +234,7 @@ def show_all(db, args=None):
 
 def show_where_custom_query(db, args):
     query, = args
-    query = re.compile(r"(\d{1,2})\/(\d{1,2})\/(\d{4})").sub(r"\3/\2/\1", query)
+    query = re.compile(r"(\d{1,2})-(\d{1,2})-(\d{4})").sub(r"'\3-\2-\1'", query)
     rows = db.query(f"SELECT * FROM transactions WHERE {query}")
     for row in rows :
         print(_format_row(row))
@@ -257,9 +257,9 @@ def print_categorized_expenses(db_rows):
 
 def show_date_between(db, args):
     date0, date1 = args
-    date0 = "/".join(date0.split("/")[::-1])
-    date1 = "/".join(date1.split("/")[::-1])
-    rows = db.query(f"SELECT * FROM transactions WHERE date >= {date0} AND date <= {date1}")
+    date0 = "-".join(date0.split("-")[::-1])
+    date1 = "-".join(date1.split("-")[::-1])
+    rows = db.query(f"SELECT * FROM transactions WHERE date >= '{date0}' AND date <= '{date1}'")
     rows = [row for row in rows if not row[1].startswith("?")] # Exclude undefined dates
     for row in rows :
         print(_format_row(row))
@@ -268,8 +268,8 @@ def show_date_between(db, args):
 
 def show_date_before(db, args):
     date0, = args
-    date0 = "/".join(date0.split("/")[::-1])
-    rows = db.query(f"SELECT * FROM transactions WHERE date <= {date0}")
+    date0 = "-".join(date0.split("-")[::-1])
+    rows = db.query(f"SELECT * FROM transactions WHERE date <= '{date0}'")
     rows = [row for row in rows if not row[1].startswith("?")] # Exclude undefined dates
     for row in rows :
         print(_format_row(row))
@@ -278,8 +278,8 @@ def show_date_before(db, args):
 
 def show_date_after(db, args):
     date0, = args
-    date0 = "/".join(date0.split("/")[::-1])
-    rows = db.query(f"SELECT * FROM transactions WHERE date >= {date0}")
+    date0 = "-".join(date0.split("-")[::-1])
+    rows = db.query(f"SELECT * FROM transactions WHERE date >= '{date0}'")
     rows = [row for row in rows if not row[1].startswith("?")] # Exclude undefined dates
     for row in rows :
         print(_format_row(row))
@@ -301,7 +301,7 @@ def input_int(prompt, retry_message="Must input integer."):
             pass
 
 def fix_date(datestr):
-    return re.compile(r"(\d{1,2})\/(\d{1,2})\/(\d{4})").sub(r"\3/\2/\1", datestr)
+    return re.compile(r"(\d{1,2})-(\d{1,2})-(\d{4})").sub(r"\3-\2-\1", datestr)
 
 def show_entry_by_id(db, args):
     entry_id, = args

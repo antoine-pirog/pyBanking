@@ -238,7 +238,7 @@ def update_dates(dates, text):
         else:
             prefix = ""
         parts = date.split("/")
-        date_formatted = f"{prefix}{parts[2]}/{parts[1]}/{parts[0]}"
+        date_formatted = f"{prefix}{parts[2]}-{parts[1]}-{parts[0]}"
         dates_updated[i] = date_formatted
 
     return dates_updated
