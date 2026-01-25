@@ -112,15 +112,44 @@ class CLI(cmd.Cmd):
         self.db = db
 
     def do_show(self, line):
+        """ Shows list of expenses 
+            | Supported commands :
+            | - show all
+            | - show uncategorized
+            | - show categories
+            | - show date after <dd/mm/yyyy> 
+            |   > ex. : show date after 01/01/2024
+            | - show date before <dd/mm/yyyy>
+            |   > ex. : show date before 01/01/2024
+            | - show date between <dd/mm/yyyy-dd/mm/yyyy>
+            |   > ex. : show date afte between 01/01/2024-31/12/2025
+            | - show where <sql filter>
+            |   > ex. : show where amount < -1000
+            |   > columns in db are :
+            |     - date (str)
+            |     - label (str)
+            |     - amount (float)
+            |     - category (int)
+            |     - subcategory (int)
+            |     - ignore (int)"""
         cmd_lookup(self.db, f"show {line}")
     
     def do_edit(self, line):
+        """ Edits a database entry
+            | Syntax : edit <db entry id>
+            | > ex. : edit 1801
+        """
         cmd_lookup(self.db, f"edit {line}")
 
     def do_search(self, line):
+        """ Searches transaction entries labels for a string
+            | Syntax : search <pattern to search>
+            | > ex. : search sushi bar
+        """
         cmd_lookup(self.db, f"search {line}")
 
     def do_exit(self, line):
+        """Exits the program """
         return True
 
 def _format_row(db_row):
