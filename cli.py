@@ -237,9 +237,9 @@ def show_where_custom_query(db, args):
     print_categorized_expenses(rows)
 
 def print_categorized_expenses(db_rows):
-    expenses_by_category, expenses_by_subcategory = classifier.categorize_expenses(db_rows)
-    total_expenses = sum([DbTransaction(row).amount for row in db_rows])
+    total_expenses, expenses_by_category, expenses_by_subcategory = classifier.categorize_expenses(db_rows)
     categorized_expenses = {**expenses_by_category, **expenses_by_subcategory}
+    print(f"{'TOTAL' + ' ':#<65} {total_expenses:>8.2f} €")
     for category_id in expenses_by_category:
         category, _ = classifier.get_category_name(category_id*100 + 1)
         subtotal = expenses_by_category[category_id]

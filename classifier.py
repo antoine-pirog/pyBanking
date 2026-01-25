@@ -36,6 +36,7 @@ def get_category_by_id(subcategory_id):
                 return (category, subcategory)
 
 def categorize_expenses(db_rows):
+    expenses_total = 0
     expenses_by_category = {}
     expenses_by_subcategory = {}
     for row in db_rows:
@@ -47,6 +48,7 @@ def categorize_expenses(db_rows):
             expenses_by_category[transaction.category] = 0
         if transaction.subcategory not in expenses_by_subcategory:
             expenses_by_subcategory[transaction.subcategory] = 0
+        expenses_total                                   += transaction.amount
         expenses_by_category[transaction.category]       += transaction.amount
         expenses_by_subcategory[transaction.subcategory] += transaction.amount
-    return expenses_by_category, expenses_by_subcategory
+    return expenses_total, expenses_by_category, expenses_by_subcategory
