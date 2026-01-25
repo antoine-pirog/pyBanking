@@ -185,6 +185,8 @@ def show_buffered(db=None, args=None):
     print()
 
     print_categorized_expenses(BUFFERED)
+    print()
+    print_categorized_revenues(BUFFERED)
 
 def show_uncategorized(db, args=None):
     print("=================================================")
@@ -254,6 +256,8 @@ def show_all(db, args=None):
         print(_format_row(row))
     print()
     print_categorized_expenses(rows)
+    print()
+    print_categorized_revenues(rows)
     return rows
 
 def show_where_custom_query(db, args):
@@ -264,12 +268,14 @@ def show_where_custom_query(db, args):
         print(_format_row(row))
     print()
     print_categorized_expenses(rows)
+    print()
+    print_categorized_revenues(rows)
     return rows
 
 def print_categorized_expenses(db_rows):
     total_expenses, expenses_by_category, expenses_by_subcategory = classifier.categorize_expenses(db_rows)
     categorized_expenses = {**expenses_by_category, **expenses_by_subcategory}
-    print(f"{'TOTAL' + ' ':#<65} {total_expenses:>8.2f} €")
+    print(f"{'TOTAL EXPENSES' + ' ':#<65} {total_expenses:>8.2f} €")
     for category_id in expenses_by_category:
         category, _ = classifier.get_category_name(category_id*100 + 1)
         subtotal = expenses_by_category[category_id]
@@ -279,6 +285,20 @@ def print_categorized_expenses(db_rows):
                 _, subcategory = classifier.get_category_name(subcategory_id)
                 subtotal = expenses_by_subcategory[subcategory_id]
                 print(f"  - {subcategory + ' ':-<30} {subtotal:>8.2f} € ({100*subtotal/total_expenses:>5.2f}%)")
+
+def print_categorized_revenues(db_rows):
+    total_revenues, revenues_by_category, revenues_by_subcategory = classifier.categorize_revenues(db_rows)
+    categorized_revenues = {**revenues_by_category, **revenues_by_subcategory}
+    print(f"{'TOTAL REVENUES' + ' ':#<65} {total_revenues:>8.2f} €")
+    for category_id in revenues_by_category:
+        category, _ = classifier.get_category_name(category_id*100 + 1)
+        subtotal = revenues_by_category[category_id]
+        print(f"{category + ' ':=<60} {subtotal:>8.2f} € ({100*subtotal/total_revenues:>5.2f}%)")
+        for subcategory_id in revenues_by_subcategory:
+            if (subcategory_id // 100) == category_id :
+                _, subcategory = classifier.get_category_name(subcategory_id)
+                subtotal = revenues_by_subcategory[subcategory_id]
+                print(f"  - {subcategory + ' ':-<30} {subtotal:>8.2f} € ({100*subtotal/total_revenues:>5.2f}%)")
 
 def show_date_between(db, args):
     date0, date1 = args
@@ -290,6 +310,8 @@ def show_date_between(db, args):
         print(_format_row(row))
     print()
     print_categorized_expenses(rows)
+    print()
+    print_categorized_revenues(rows)
     return rows
 
 def show_date_before(db, args):
@@ -301,6 +323,8 @@ def show_date_before(db, args):
         print(_format_row(row))
     print()
     print_categorized_expenses(rows)
+    print()
+    print_categorized_revenues(rows)
     return rows
 
 def show_date_after(db, args):
@@ -312,6 +336,8 @@ def show_date_after(db, args):
         print(_format_row(row))
     print()
     print_categorized_expenses(rows)
+    print()
+    print_categorized_revenues(rows)
     return rows
 
 def show_month(db, args):

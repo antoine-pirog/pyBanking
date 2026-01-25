@@ -52,3 +52,21 @@ def categorize_expenses(db_rows):
         expenses_by_category[transaction.category]       += transaction.amount
         expenses_by_subcategory[transaction.subcategory] += transaction.amount
     return expenses_total, expenses_by_category, expenses_by_subcategory
+
+def categorize_revenues(db_rows):
+    revenues_total = 0
+    revenues_by_category = {}
+    revenues_by_subcategory = {}
+    for row in db_rows:
+        transaction = DbTransaction(row)
+        if transaction.amount <= 0:
+            # Not a revenue
+            continue
+        if transaction.category not in revenues_by_category:
+            revenues_by_category[transaction.category] = 0
+        if transaction.subcategory not in revenues_by_subcategory:
+            revenues_by_subcategory[transaction.subcategory] = 0
+        revenues_total                                   += transaction.amount
+        revenues_by_category[transaction.category]       += transaction.amount
+        revenues_by_subcategory[transaction.subcategory] += transaction.amount
+    return revenues_total, revenues_by_category, revenues_by_subcategory
