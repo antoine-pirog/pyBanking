@@ -94,6 +94,9 @@ def cmd_lookup(db, command):
         r"show date +between +(\d{1,2}-\d{1,2}-\d{4}):(\d{1,2}-\d{1,2}-\d{4})" : show_date_between,
         r"show date +before +(\d{1,2}-\d{1,2}-\d{4})" : show_date_before,
         r"show date +after +(\d{1,2}-\d{1,2}-\d{4})" : show_date_after,
+        r"show month +(\d{1,2}-\d{4})" : show_month,
+        r"show month +(\d{4}-\d{1,2})" : show_month,
+        r"show year +(\d{4})" : show_year,
         r"show (\d+)" : show_entry_by_id,
         r"edit (\d+)" : edit_entry_by_id,
         r"search (.+)" : search_text,
@@ -124,6 +127,8 @@ class CLI(cmd.Cmd):
             |   > ex. : show date before 01-01-2024
             | - show date between <dd-mm-yyyy:dd-mm-yyyy>
             |   > ex. : show date afte between 01-01-2024:31-12-2025
+            | - show month <mm-yyyy>
+            | - show year <yyyy>
             | - show where <sql filter>
             |   > ex. : show where amount < -1000
             |   > columns in db are :
@@ -285,6 +290,24 @@ def show_date_after(db, args):
         print(_format_row(row))
     print()
     print_categorized_expenses(rows)
+
+def show_month(db, args):
+    date, = args
+    date = date.strip()
+    match_mmyyyy = re.compile(r".*(\d{2})-(\d{4}).*").match(date)
+    match_yyyymm = re.compile(r".*(\d{4})-(\d{2}).*").match(date)
+    if match_mmyyyy:
+        month = match_mmyyyy.group(1)
+        year  = match_mmyyyy.group(2)
+    if match_yyyymm:
+        month = match_mmyyyy.group(2)
+        year  = match_mmyyyy.group(1)
+    show_where_custom_query(db, (f"date >= '{year}-{month}-01' AND date <= '{year}-{month}-31'",))
+
+def show_year(db, args):
+    year, = args
+    year = year.strip()
+    show_where_custom_query(db, (f"date >= '{year}-01-01' AND date <= '{year}-12-31'",))
 
 def input_text(prompt):
     return input(prompt)
