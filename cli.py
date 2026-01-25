@@ -97,6 +97,7 @@ def cmd_lookup(db, command):
         r"show (\d+)" : show_entry_by_id,
         r"edit (\d+)" : edit_entry_by_id,
         r"search (.+)" : search_text,
+        r"sql (.+)" : execute_sql_request,
     }
     for regex in regexes:
         match = re.compile(regex).match(command)
@@ -147,6 +148,10 @@ class CLI(cmd.Cmd):
             | > ex. : search sushi bar
         """
         cmd_lookup(self.db, f"search {line}")
+    
+    def do_sql(self, line):
+        """ Executes a SQL request on the database """
+        cmd_lookup(self.db, f"sql {line}")
 
     def do_exit(self, line):
         """Exits the program """
@@ -362,3 +367,7 @@ def search_text(db, args):
         print("|   " + _format_row(match))
     print(f"+-------------------------------------------------")
 
+def execute_sql_request(db, args):
+    request, = args
+    db.raw_execute(request)
+    db.commit()

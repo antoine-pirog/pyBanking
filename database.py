@@ -61,3 +61,6 @@ class Database:
             return self.conn.execute(f"SELECT * FROM transactions WHERE id = {id}").fetchall()[0]
         except IndexError:
             return None
+    
+    def raw_execute(self, request):
+        self.conn.execute(request)
