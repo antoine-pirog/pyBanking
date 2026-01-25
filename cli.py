@@ -5,6 +5,8 @@ import random
 import classifier
 from common import DbTransaction
 
+BUFFERED = []
+
 messages = [
     "Reconstructing your financial crimes...",
     "Parsing your questionable life choices...",
@@ -86,6 +88,7 @@ intro_message += f"= Type help for commands.\n"
 intro_message += f"================================================\n"
 
 def cmd_lookup(db, command):
+    global BUFFERED
     regexes = {
         r"show all" : show_all,
         r"show where +(.+)" : show_where_custom_query,
@@ -97,16 +100,21 @@ def cmd_lookup(db, command):
         r"show month +(\d{1,2}-\d{4})" : show_month,
         r"show month +(\d{4}-\d{1,2})" : show_month,
         r"show year +(\d{4})" : show_year,
+        r"show buffered" : show_buffered,
         r"show (\d+)" : show_entry_by_id,
         r"edit (\d+)" : edit_entry_by_id,
         r"search (.+)" : search_text,
         r"sql (.+)" : execute_sql_request,
     }
+    buffered = None
     for regex in regexes:
         match = re.compile(regex).match(command)
         if match:
-            regexes[regex](db, match.groups())
+            buffered = regexes[regex](db, match.groups())
             continue
+
+    if buffered is not None:
+        BUFFERED = buffered
 
 class CLI(cmd.Cmd):
     prompt = "> "
@@ -169,6 +177,14 @@ def _format_row(db_row):
         transaction.label = transaction.label[:47] + "..."
     return f"[{transaction.id:>5}] {transaction.date} : {transaction.label:-<50} {transaction.amount:>8.2f} € - {category} / {subcategory}"
 
+def show_buffered(db=None, args=None):
+    global BUFFERED
+    for row in BUFFERED :
+        print(_format_row(row))
+    print()
+
+    print_categorized_expenses(BUFFERED)
+
 def show_uncategorized(db, args=None):
     print("=================================================")
     print("Uncategorized transactions :")
@@ -203,6 +219,7 @@ def show_uncategorized(db, args=None):
         if labels[label]["amount"] > 100:
             print(f"  - {label} ({labels[label]["amount"]:.2f} € on {labels[label]["nbr"]} transaction(s))")
     print("=================================================")
+    return uncategorized
 
 def update_uncategorized(db, args=None):
     rows_to_update = db.fetch_uncategorized()
@@ -236,6 +253,7 @@ def show_all(db, args=None):
         print(_format_row(row))
     print()
     print_categorized_expenses(rows)
+    return rows
 
 def show_where_custom_query(db, args):
     query, = args
@@ -245,6 +263,7 @@ def show_where_custom_query(db, args):
         print(_format_row(row))
     print()
     print_categorized_expenses(rows)
+    return rows
 
 def print_categorized_expenses(db_rows):
     total_expenses, expenses_by_category, expenses_by_subcategory = classifier.categorize_expenses(db_rows)
@@ -270,6 +289,7 @@ def show_date_between(db, args):
         print(_format_row(row))
     print()
     print_categorized_expenses(rows)
+    return rows
 
 def show_date_before(db, args):
     date0, = args
@@ -280,6 +300,7 @@ def show_date_before(db, args):
         print(_format_row(row))
     print()
     print_categorized_expenses(rows)
+    return rows
 
 def show_date_after(db, args):
     date0, = args
@@ -290,6 +311,7 @@ def show_date_after(db, args):
         print(_format_row(row))
     print()
     print_categorized_expenses(rows)
+    return rows
 
 def show_month(db, args):
     date, = args
@@ -302,12 +324,14 @@ def show_month(db, args):
     if match_yyyymm:
         month = match_mmyyyy.group(2)
         year  = match_mmyyyy.group(1)
-    show_where_custom_query(db, (f"date >= '{year}-{month}-01' AND date <= '{year}-{month}-31'",))
+    buffered = show_where_custom_query(db, (f"date >= '{year}-{month}-01' AND date <= '{year}-{month}-31'",))
+    return buffered
 
 def show_year(db, args):
     year, = args
     year = year.strip()
-    show_where_custom_query(db, (f"date >= '{year}-01-01' AND date <= '{year}-12-31'",))
+    buffered = show_where_custom_query(db, (f"date >= '{year}-01-01' AND date <= '{year}-12-31'",))
+    return buffered
 
 def input_text(prompt):
     return input(prompt)
@@ -400,6 +424,7 @@ def search_text(db, args):
     for match in matches:
         print("|   " + _format_row(match))
     print(f"+-------------------------------------------------")
+    return matches
 
 def execute_sql_request(db, args):
     request, = args
