@@ -46,6 +46,7 @@
     "darty.com" : 205,
     "farnell.*" : 205,
     ".*ldlc.com.*" : 205,
+    ".*western digital.*" : 205,
 
     "google play app.*" : 206,
 
@@ -149,6 +150,7 @@
     "RELAIS ARYELETS" : 305,
     "TAVERNE DE TALE" : 305,
     "le buro" : 305,
+    "SARL MXL" : 305,
 
     ".*auchan.*" : 306,
     ".*carrefour.*" : 306,
@@ -170,6 +172,8 @@
     "epicerie.*" : 306,
     "artisans du gou" : 306,
     "coop.*suisse.*" : 306,
+    "PILAR" : 306,
+    "SARL JMH" : 306,
 
     "lindt.*" : 307, 
     "meert.*" : 307,
@@ -212,6 +216,7 @@
 
     "gifi" : 1001,
     "ikea.*" : 1001,
+    "emma sleep.*" : 1001,
 
     "weldom.*" : 1007,
     "brico relais" : 1007,
@@ -247,6 +252,7 @@
     "the sherlock.*" : 1102,
     "les berthom" : 1102,
     "titi twister" : 1102,
+    "LE SUR MESURE" : 1102,
     
     ".*panajou.*" : 1105,
     "digixo" : 1105,
@@ -256,6 +262,9 @@
     "le labo photo" : 1105,
     "BROUSS'ART MUSI" : 1105,
     "Reverb.com.*" : 1105,
+    "SONODIM" : 1105,
+    "adobe.*" : 1105,
+    ".*thomann.*" : 1105,
 
     ".*hotel.*" : 1106,
     "resid hotel" : 1106,
@@ -274,6 +283,7 @@
     "auberge carrica" : 1111,
     "auberge logibar" : 1111,
     "camp clairiere" : 1111,
+    ".*airbnb.*" : 1111,
 
     "accolab.*" : 1201, 
 
