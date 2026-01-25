@@ -124,6 +124,10 @@ def parse_main_operations(text, verbose=False):
             amount = -tofloat(amount)
         elif re.compile(r"virement permanent pour.+").match(label.lower()):
             amount = -tofloat(amount)
+        elif re.compile(r"virement instantane a.+").match(label.lower()):
+            amount = -tofloat(amount)
+        elif re.compile(r"virement emis a.+").match(label.lower()):
+            amount = -tofloat(amount)
         else:
             amount = tofloat(amount)
         table.append(Transaction(

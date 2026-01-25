@@ -94,6 +94,7 @@
     "mezzo di pasta" : 304,
     "PARTNER S FOOD" : 304,
     ".*falapit.*" : 304,
+    "PB PRODUCTION" : 304,
 
     ".*restaurant.*" : 305,
     "alcala restau.*" : 305,
@@ -196,6 +197,8 @@
     "tcl" : 410,
     "ratp" : 410,
 
+    "lydia.*" : 501,
+
     ".*RETRAIT DAB LA BANQUE POSTALE.*" : 603,
 
     "COTISATION TRIMESTRIELLE  DE VOTRE FORMULE DE COMPTE" : 501,
@@ -205,6 +208,7 @@
     "FRAIS PAIEMENT CARTE INTERNAT" : 504,
 
     "FINANCES PUBLIQUES" : 904,
+    "DIRECTION GENERALE DES FINANCES" : 904,
 
     "gifi" : 1001,
     "ikea.*" : 1001,
@@ -274,7 +278,6 @@
     "accolab.*" : 1201, 
 
     "docteur .*" : 1204,
-    "dr .*" : 1204,
 
     ".*pharm.*" : 1206,
     ".*pharma.*" : 1206,
