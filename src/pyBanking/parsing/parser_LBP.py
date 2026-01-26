@@ -3,24 +3,25 @@ import pymupdf
 import re
 import json
 
-from common import Transaction
+from importlib import resources
 
-from pdf_utils import dump_text
-from pdf_utils import regex_ignore_chars
-from pdf_utils import extract_text_between_tags
-from pdf_utils import tofloat
-from pdf_utils import reformat
-
-from secrets import secrets
-
-statement_tags = json.load(open('statement_tags.json'))
-statement_bank = "LaBanquePostale"
-statement_file_version = "V2024"
+from pyBanking.utils.common import Transaction
+from pyBanking.utils.pdf_utils import dump_text
+from pyBanking.utils.pdf_utils import regex_ignore_chars
+from pyBanking.utils.pdf_utils import extract_text_between_tags
+from pyBanking.utils.pdf_utils import tofloat
+from pyBanking.utils.pdf_utils import reformat
 
 IGNORE_CHARS = set([" ", "\n", "\r"])
-DETAILED_LISTING_RE  = 'detailed_listing_regexes' 
-ACCOUNTS_OVERVIEW_RE = 'accounts_overview_regexes'
-MAIN_OPERATIONS_RE   = 'main_operations_regexes'
+
+def extract_transactions(path_to_file):
+    text = load_pdf_statement(path_to_file)
+    detail = parse_detailed_listing(text)
+    main_ops = parse_main_operations(text)
+    transactions = []
+    transactions.extend(detail)
+    transactions.extend(main_ops)
+    return transactions
 
 def load_pdf_statement(path_to_file):
     doc = pymupdf.open(path_to_file)
@@ -70,8 +71,8 @@ def parse_tabular_data(text):
 
 def parse_accounts_overview(text, verbose=False):
     """ Get span of accounts overview """
-    pattern_start = statement_tags[statement_bank][ACCOUNTS_OVERVIEW_RE][statement_file_version]['start']
-    pattern_end   = statement_tags[statement_bank][ACCOUNTS_OVERVIEW_RE][statement_file_version]['end']
+    pattern_start = "Situation de vos comptes"
+    pattern_end   = "Compte Courant Postal"
     
     """ Extract accounts overview """
     overview_raw = extract_text_between_tags(
@@ -97,8 +98,8 @@ def parse_accounts_overview(text, verbose=False):
 
 def parse_main_operations(text, verbose=False):
     """ Get span of main operations """
-    pattern_start = statement_tags[statement_bank][MAIN_OPERATIONS_RE][statement_file_version]['start']
-    pattern_end   = statement_tags[statement_bank][MAIN_OPERATIONS_RE][statement_file_version]['end']
+    pattern_start = "Compte Courant Postal n. \\d{2} \\d{3} \\d{2}[A-Z] \\d{3}"
+    pattern_end   = "Total des op.rations"
 
     """ Extract main operations """
     operations_raw = extract_text_between_tags(
@@ -150,8 +151,8 @@ def parse_main_operations(text, verbose=False):
 
 def parse_detailed_listing(text, verbose=False):
     """ Get span of detailed listing """
-    pattern_start = statement_tags[statement_bank][DETAILED_LISTING_RE][statement_file_version]['start']
-    pattern_end   = statement_tags[statement_bank][DETAILED_LISTING_RE][statement_file_version]['end']
+    pattern_start = "Carte VISA PREMIER"
+    pattern_end   = "Montant pr.lev. sur votre CCP"
 
     """ Extract detailed listing """
     detail_raw = extract_text_between_tags(

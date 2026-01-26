@@ -1,7 +1,7 @@
 import sqlite3
 
 class Database:
-    def __init__(self, db_path="database.db"):
+    def __init__(self, db_path="data/database.db"):
         self.db_path = db_path
         self.conn = sqlite3.connect(self.db_path)
         
@@ -28,9 +28,10 @@ class Database:
     def cursor(self):
         return self.conn.cursor()
 
-    def query(self, request, exclude_ignored=True):
+    def query(self, request, exclude_ignored=False):
         if exclude_ignored:
             request += " AND ignore = 0" if "WHERE" in request else " WHERE ignore = 0"
+        print(request)
         return self.conn.execute(request).fetchall()
 
     def commit(self):

@@ -1,16 +1,11 @@
 import re
 import json
-from pdf_utils import regex_ignore_chars
-from common import DbTransaction
+from pyBanking.utils.pdf_utils import regex_ignore_chars
+from pyBanking.utils.common import DbTransaction
+from pyBanking.classification import loaders
 
-from secrets import secrets
-
-with open("classifiers.json", encoding='utf-8') as f:
-    CLASSIFIERS = json.load(f)
-    CLASSIFIERS = {**CLASSIFIERS, **secrets["classifiers"]}
-
-with open("categories.json", encoding='utf-8') as f:
-    CATEGORIES = json.load(f)["categories"]
+CATEGORIES  = loaders.load_categories()
+CLASSIFIERS = loaders.load_classifiers()
 
 def get_category_name(subcategory_id):
     main_category_id = subcategory_id // 100
@@ -23,8 +18,6 @@ def get_category_name(subcategory_id):
 
 def classify(label):
     for classifier in CLASSIFIERS:
-        # if re.compile(classifier, re.IGNORECASE).match(label):
-        #     return get_category_by_id(CLASSIFIERS[classifier])
         if regex_ignore_chars(pattern=classifier, text=label, flags=re.IGNORECASE):
             return get_category_by_id(CLASSIFIERS[classifier])
     return get_category_by_id(601)  # Uncategorized
