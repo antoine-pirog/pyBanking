@@ -152,6 +152,7 @@
     "le buro" : 305,
     "SARL MXL" : 305,
 
+    ".*supermarche.*" : 306,
     ".*auchan.*" : 306,
     ".*carrefour.*" : 306,
     ".*picard.*" : 306,
@@ -195,21 +196,29 @@
     "asf-.*" : 408,
     "autoroute.*" : 408,
 
+    ".*taxi.*" : 410,
+    ".*transports.*" : 410,
     "tbm-vente.*" : 410,
     "keolis.*" : 410,
     "service navigo" : 410,
     "tcl" : 410,
     "ratp" : 410,
 
+    ".*banque.*" : 501,
     "lydia.*" : 501,
-
-    ".*RETRAIT DAB LA BANQUE POSTALE.*" : 603,
-
     "COTISATION TRIMESTRIELLE  DE VOTRE FORMULE DE COMPTE" : 501,
 
     "DEBIT CARTE BANCAIRE DIFFERE" : 502,
 
+    ".*epargne.*" : 503,
+
     "FRAIS PAIEMENT CARTE INTERNAT" : 504,
+
+    ".*assurance.*" : 602,
+
+    ".*RETRAIT DAB LA BANQUE POSTALE.*" : 603,
+
+    ".*salaire.*" : 716,
 
     "FINANCES PUBLIQUES" : 904,
     "DIRECTION GENERALE DES FINANCES" : 904,
@@ -226,6 +235,8 @@
 
     "jardiland" : 1008, 
     "truffaut" : 1008,
+
+    ".*loyer.*" : 1010,
 
     "lodge" : 1011,
     "ENVIE GIRONDE" : 1011,
@@ -270,6 +281,7 @@
     "resid hotel" : 1106,
     "coralline" : 1106,
 
+    ".*cinema.*" : 1108,
     "reserve ornitho" : 1108,
     "bassin lumieres" : 1108,
     "ugc.*" : 1108,
