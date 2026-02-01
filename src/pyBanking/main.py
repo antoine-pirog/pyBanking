@@ -11,6 +11,9 @@ from pyBanking.cli.interface import CLI
 from pyBanking.cli.functions import update_uncategorized, show_uncategorized
 from pyBanking.context import AppContext
 
+from importlib import resources
+from pyBanking.utils.secrets import secrets
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Manage and monitor finances and expenses.')
     parser.add_argument('-f', '--files', type=str  , help='Input statement files (pdf)')
@@ -20,10 +23,12 @@ if __name__ == "__main__":
     parser.add_argument('--rebuild-database', action='store_true')
     args = parser.parse_args()
 
+    db_path = secrets["db_path"]
+
     if args.rebuild_database:
         import os
-        os.remove("data/database.db")
-    db = Database()
+        os.remove(db_path)
+    db = Database(db_path = db_path)
     ctx = AppContext(db)
 
     if args.files:
