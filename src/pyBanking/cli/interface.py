@@ -46,7 +46,7 @@ class CLI(cmd.Cmd):
     def __init__(self, context):
         global intro_message
         super().__init__(self)
-        self.prompt = "> "
+        self.prompt = "(pyBanking) > "
         self.intro = intro_message
         self.context = context
 
