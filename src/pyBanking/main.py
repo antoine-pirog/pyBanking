@@ -22,7 +22,7 @@ if __name__ == "__main__":
 
     if args.rebuild_database:
         import os
-        os.remove("database.db")
+        os.remove("data/database.db")
     db = Database()
     ctx = AppContext(db)
 

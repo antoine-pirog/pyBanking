@@ -3,8 +3,6 @@ import pymupdf
 import re
 import json
 
-from importlib import resources
-
 from pyBanking.utils.common import Transaction
 from pyBanking.utils.pdf_utils import dump_text
 from pyBanking.utils.pdf_utils import regex_ignore_chars
