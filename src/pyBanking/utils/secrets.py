@@ -6,12 +6,11 @@ class Hasher(dict):
     def __missing__(self, key):
         value = self[key] = type(self)()
         return value
-
-with resources.files("pyBanking.resources").joinpath("categories.json").open("r") as f:
-    try:
+try:
+    with resources.files("pyBanking").joinpath("secrets.json").open("r") as f:
         secrets = Hasher(json.load(f))
-    except FileNotFoundError:
-        print("WARNING: secrets.json not found, using empty secrets.")
-        secrets = Hasher({})
+except FileNotFoundError:
+    print("WARNING: secrets.json not found, using empty secrets and dummy database.")
+    secrets = Hasher({"db_path" : "data/dummy_database.db"})
 
 
