@@ -46,10 +46,10 @@ if __name__ == "__main__":
                 db.insert(dbtransaction)
     
     if args.update_uncategorized:
-        cupdate_uncategorized(db)
+        update_uncategorized(ctx)
 
     if args.show_uncategorized:
-        cshow_uncategorized(db)
+        show_uncategorized(ctx)
     
     if args.interactive:
         CLI(ctx).cmdloop()
