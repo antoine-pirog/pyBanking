@@ -28,7 +28,7 @@ class Database:
     def cursor(self):
         return self.conn.cursor()
 
-    def query(self, request, exclude_ignored=False):
+    def query(self, request, exclude_ignored=True):
         if exclude_ignored:
             request += " AND ignore = 0" if "WHERE" in request else " WHERE ignore = 0"
         print(request)
