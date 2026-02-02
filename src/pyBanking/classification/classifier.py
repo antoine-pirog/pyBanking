@@ -16,6 +16,15 @@ def get_category_name(subcategory_id):
         if subcategory["id"] == subcategory_id:
             return (category["name"], subcategory["name"])
 
+def get_category_properties(subcategory_id):
+    main_category_id = subcategory_id // 100
+    for category in CATEGORIES:
+        if category["id"] == main_category_id:
+            break
+    for subcategory in category["subcategories"]:
+        if subcategory["id"] == subcategory_id:
+            return (category, subcategory)
+
 def classify(label):
     for classifier in CLASSIFIERS:
         if regex_ignore_chars(pattern=classifier, text=label, flags=re.IGNORECASE):

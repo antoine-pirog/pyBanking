@@ -4,6 +4,7 @@
       "id": 1,
       "name": "Abonnements",
       "description": "",
+      "color": "#008700",
       "subcategories": [
         { "id": 101, "name": "Abonnements - Autres", "description": "", "ignore": false },
         { "id": 102, "name": "Câble / Satellite", "description": "", "ignore": false },
@@ -16,6 +17,7 @@
       "id": 2,
       "name": "Achats & Shopping",
       "description": "",
+      "color": "#d75f87",
       "subcategories": [
         { "id": 201, "name": "Achats & Shopping - Autres", "description": "", "ignore": false },
         { "id": 202, "name": "Articles de Sport", "description": "", "ignore": false },
@@ -33,6 +35,7 @@
       "id": 3,
       "name": "Alimentation & Restaurants",
       "description": "",
+      "color": "#87afff",
       "subcategories": [
         { "id": 301, "name": "Alimentation & Restaurants - Autres", "description": "", "ignore": false },
         { "id": 302, "name": "Café", "description": "", "ignore": false },
@@ -47,6 +50,7 @@
       "id": 4,
       "name": "Auto & Transports",
       "description": "",
+      "color": "#ff5f00",
       "subcategories": [
         { "id": 401, "name": "Auto & Transports - Autres", "description": "", "ignore": false },
         { "id": 402, "name": "Assurance véhicule", "description": "", "ignore": false },
@@ -64,6 +68,7 @@
       "id": 5,
       "name": "Banque & Services Financiers",
       "description": "",
+      "color": "#d7af00",
       "subcategories": [
         { "id": 501, "name": "Banque & Services Financiers - Autres", "description": "", "ignore": false },
         { "id": 502, "name": "Débit mensuel carte", "description": "", "ignore": true },
@@ -79,6 +84,7 @@
       "id": 6,
       "name": "Divers",
       "description": "",
+      "color": "#808080",
       "subcategories": [
         { "id": 601, "name": "À catégoriser", "description": "", "ignore": false },
         { "id": 602, "name": "Assurance", "description": "", "ignore": false },
@@ -92,6 +98,7 @@
       "id": 7,
       "name": "Dépenses pro",
       "description": "",
+      "color": "#FFFFFF",
       "subcategories": [
         { "id": 701, "name": "Dépenses pro - Autres", "description": "", "ignore": false },
         { "id": 702, "name": "Comptabilité", "description": "", "ignore": false },
@@ -118,6 +125,7 @@
       "id": 8,
       "name": "Esthétique & Soins",
       "description": "",
+      "color": "#ff00af",
       "subcategories": [
         { "id": 801, "name": "Esthétique & Soins - Autres", "description": "", "ignore": false },
         { "id": 802, "name": "Coiffeur", "description": "", "ignore": false },
@@ -130,6 +138,7 @@
       "id": 9,
       "name": "Impôts & Taxes",
       "description": "",
+      "color": "#d78700",
       "subcategories": [
         { "id": 901, "name": "Impôts & Taxes - Autres", "description": "", "ignore": false },
         { "id": 902, "name": "Amendes", "description": "", "ignore": false },
@@ -143,6 +152,7 @@
       "id": 10,
       "name": "Logement",
       "description": "",
+      "color": "#87af00",
       "subcategories": [
         { "id": 1001, "name": "Logement - Autres", "description": "", "ignore": false },
         { "id": 1002, "name": "Assurance habitation", "description": "", "ignore": false },
@@ -161,6 +171,7 @@
       "id": 11,
       "name": "Loisirs & Sorties",
       "description": "",
+      "color": "#8787ff",
       "subcategories": [
         { "id": 1101, "name": "Loisirs & Sorties - Autres", "description": "", "ignore": false },
         { "id": 1102, "name": "Bars / Clubs", "description": "", "ignore": false },
@@ -178,6 +189,7 @@
     {
       "id": 12,
       "name": "Santé",
+      "color": "#d70000",
       "description": "",
       "subcategories": [
         { "id": 1201, "name": "Santé - Autres", "description": "", "ignore": false },
@@ -194,6 +206,7 @@
       "id": 13,
       "name": "Scolarité & Enfants",
       "description": "",
+      "color": "#af87d7",
       "subcategories": [
         { "id": 1301, "name": "Scolarité & Enfants - Autres", "description": "", "ignore": false },
         { "id": 1302, "name": "Baby-sitters & Crèches", "description": "", "ignore": false },

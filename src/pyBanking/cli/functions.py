@@ -2,19 +2,21 @@ import re
 from pyBanking.utils.common import DbTransaction
 from pyBanking.cli import utils
 from pyBanking.classification import classifier
+from pyBanking.cli.console import console
+from pyBanking.cli import colors
 
 def show_buffered(ctx, args=None):
     for row in ctx.buffered :
-        print(utils._format_row(row))
-    print()
+        console.print(utils._format_row(row))
+    console.print()
 
     print_categorized_expenses(ctx.buffered)
-    print()
+    console.print()
     print_categorized_revenues(ctx.buffered)
 
 def show_uncategorized(ctx, args=None):
-    print("=================================================")
-    print("Uncategorized transactions :")
+    console.print("=================================================")
+    console.print("Uncategorized transactions :")
     uncategorized = ctx.db.fetch_uncategorized()
     labels = {} # Keep track of unique labels and number of occurences
     total = 0
@@ -32,20 +34,20 @@ def show_uncategorized(ctx, args=None):
             labels[label]["nbr"] += 1
             labels[label]["amount"] += amount
         total += amount
-        print(utils._format_row(row))
-    print()
-    print(f"({len(uncategorized)} rows total - {len(labels)} unique labels) - {total:.2f} €")
-    print()
-    print("Regularily occuring labels (ignoring < 3) :")
+        console.print(utils._format_row(row))
+    console.print()
+    console.print(f"({len(uncategorized)} rows total - {len(labels)} unique labels) - {total:.2f} €")
+    console.print()
+    console.print("Regularily occuring labels (ignoring < 3) :")
     for label in sorted([k for k in labels], key=lambda x : -labels[x]["nbr"]):
         if labels[label]["nbr"] > 2:
-            print(f"  - {label} (x{labels[label]["nbr"]})")
-    print()
-    print("Most expensive occuring labels (ignoring < 100 €) :")
+            console.print(f"  - {label} (x{labels[label]["nbr"]})")
+    console.print()
+    console.print("Most expensive occuring labels (ignoring < 100 €) :")
     for label in sorted([k for k in labels], key=lambda x : -labels[x]["amount"]):
         if labels[label]["amount"] > 100:
-            print(f"  - {label} ({labels[label]["amount"]:.2f} € on {labels[label]["nbr"]} transaction(s))")
-    print("=================================================")
+            console.print(f"  - {label} ({labels[label]["amount"]:.2f} € on {labels[label]["nbr"]} transaction(s))")
+    console.print("=================================================")
     return uncategorized
 
 def update_uncategorized(ctx, args=None):
@@ -66,21 +68,21 @@ def update_uncategorized(ctx, args=None):
         if subcategory["id"] != 601:
             updated += 1
     ctx.db.commit()
-    print(f"{updated} rows updated.")
+    console.print(f"{updated} rows updated.")
 
 def show_categories(ctx, args=None):
     for category in classifier.CATEGORIES:
-        print(f"[{category['id']}] {category['name']} ======================")
+        console.print(f"[{category['id']}] {category['name']} ======================")
         for subcategory in category['subcategories']:
-            print(f"  - [{subcategory['id']:>3}] {subcategory['name']}")
+            console.print(f"  - [{subcategory['id']:>3}] {subcategory['name']}")
 
 def show_all(ctx, args=None):
     rows = ctx.db.query(f"SELECT * FROM transactions")
     for row in rows :
-        print(utils._format_row(row))
-    print()
+        console.print(utils._format_row(row))
+    console.print()
     print_categorized_expenses(rows)
-    print()
+    console.print()
     print_categorized_revenues(rows)
     return rows
 
@@ -89,40 +91,59 @@ def show_where_custom_query(ctx, args):
     query = re.compile(r"(\d{1,2})-(\d{1,2})-(\d{4})").sub(r"'\3-\2-\1'", query)
     rows = ctx.db.query(f"SELECT * FROM transactions WHERE {query}")
     for row in rows :
-        print(utils._format_row(row))
-    print()
+        console.print(utils._format_row(row))
+    console.print()
     print_categorized_expenses(rows)
-    print()
+    console.print()
     print_categorized_revenues(rows)
     return rows
 
-def print_categorized_expenses(db_rows):
-    total_expenses, expenses_by_category, expenses_by_subcategory = classifier.categorize_expenses(db_rows)
-    categorized_expenses = {**expenses_by_category, **expenses_by_subcategory}
-    print(f"{'TOTAL EXPENSES' + ' ':#<65} {total_expenses:>8.2f} €")
-    for category_id in expenses_by_category:
-        category, _ = classifier.get_category_name(category_id*100 + 1)
-        subtotal = expenses_by_category[category_id]
-        print(f"{category + ' ':=<60} {subtotal:>8.2f} € ({100*subtotal/total_expenses:>5.2f}%)")
-        for subcategory_id in expenses_by_subcategory:
+def _print_categorized(db_rows, which):
+    if which == "expenses":
+        total, amount_by_category, amount_by_subcategory = classifier.categorize_expenses(db_rows)
+        title = "TOTAL EXPENSES"
+    elif which == "revenues":
+        total, amount_by_category, amount_by_subcategory = classifier.categorize_revenues(db_rows)
+        title = "TOTAL REVENUES"
+    else:
+        return
+    categorized_transactions = {**amount_by_category, **amount_by_subcategory}
+    console.print(f"[bold #00FF00]{title + ' ':#<65} {total:>8.2f} €[/]")
+    # Print inline and as bar plot
+    Nbars = 100 # width (in characters) of bar plot
+    cat_repartition_text = ""
+    subcat_repartition_text = ""
+    subcat_repartition_text_nosymbol = ""
+    for category_id in amount_by_category:
+        category, _ = classifier.get_category_properties(category_id*100 + 1)
+        subtotal = amount_by_category[category_id]
+        percentage = 100*subtotal/total
+        legend = f"[#ffffff on {category['color']}]     [/] "
+        console.print(f"{legend} {category['name'] + ' ':=<60} {subtotal:>8.2f} € [i]({percentage:>5.2f}%)[/i]")
+        for subcategory_id in amount_by_subcategory:
             if (subcategory_id // 100) == category_id :
-                _, subcategory = classifier.get_category_name(subcategory_id)
-                subtotal = expenses_by_subcategory[subcategory_id]
-                print(f"  - {subcategory + ' ':-<30} {subtotal:>8.2f} € ({100*subtotal/total_expenses:>5.2f}%)")
+                _, subcategory = classifier.get_category_properties(subcategory_id)
+                subtotal = amount_by_subcategory[subcategory_id]
+                percentage = 100*subtotal/total
+                color = subcategory["color"] if "color" in subcategory else colors.randomize_hex_color(category['color'])
+                symbol = subcategory["name"][0].lower()
+                legend = f"  [#ffffff on {color}] {symbol} [/] "
+                console.print(f"{legend }   - {subcategory['name'] + ' ':-<30} {subtotal:>8.2f} € [i]({percentage:>5.2f}%)[/i]")
+                cat_repartition_text    += f"[#ffffff on {category['color']}]" + (" ".center(round((percentage/100) * Nbars))) + "[/]"
+                subcat_repartition_text += f"[#ffffff on {color}]"             + (symbol.center(round((percentage/100) * Nbars))) + "[/]"
+                subcat_repartition_text_nosymbol += f"[#ffffff on {color}]"    + (" ".center(round((percentage/100) * Nbars))) + "[/]"
+    console.print()
+    console.print("-"*Nbars)
+    console.print(cat_repartition_text)
+    console.print(cat_repartition_text)
+    console.print(subcat_repartition_text)
+    console.print("-"*Nbars)
+
+def print_categorized_expenses(db_rows):
+    _print_categorized(db_rows, which="expenses")
 
 def print_categorized_revenues(db_rows):
-    total_revenues, revenues_by_category, revenues_by_subcategory = classifier.categorize_revenues(db_rows)
-    categorized_revenues = {**revenues_by_category, **revenues_by_subcategory}
-    print(f"{'TOTAL REVENUES' + ' ':#<65} {total_revenues:>8.2f} €")
-    for category_id in revenues_by_category:
-        category, _ = classifier.get_category_name(category_id*100 + 1)
-        subtotal = revenues_by_category[category_id]
-        print(f"{category + ' ':=<60} {subtotal:>8.2f} € ({100*subtotal/total_revenues:>5.2f}%)")
-        for subcategory_id in revenues_by_subcategory:
-            if (subcategory_id // 100) == category_id :
-                _, subcategory = classifier.get_category_name(subcategory_id)
-                subtotal = revenues_by_subcategory[subcategory_id]
-                print(f"  - {subcategory + ' ':-<30} {subtotal:>8.2f} € ({100*subtotal/total_revenues:>5.2f}%)")
+    _print_categorized(db_rows, which="revenues")
 
 def show_date_between(ctx, args):
     date0, date1 = args
@@ -131,10 +152,10 @@ def show_date_between(ctx, args):
     rows = ctx.db.query(f"SELECT * FROM transactions WHERE date >= '{date0}' AND date <= '{date1}'")
     rows = [row for row in rows if not row[1].startswith("?")] # Exclude undefined dates
     for row in rows :
-        print(utils._format_row(row))
-    print()
+        console.print(utils._format_row(row))
+    console.print()
     print_categorized_expenses(rows)
-    print()
+    console.print()
     print_categorized_revenues(rows)
     return rows
 
@@ -144,10 +165,10 @@ def show_date_before(ctx, args):
     rows = ctx.db.query(f"SELECT * FROM transactions WHERE date <= '{date0}'")
     rows = [row for row in rows if not row[1].startswith("?")] # Exclude undefined dates
     for row in rows :
-        print(utils._format_row(row))
-    print()
+        console.print(utils._format_row(row))
+    console.print()
     print_categorized_expenses(rows)
-    print()
+    console.print()
     print_categorized_revenues(rows)
     return rows
 
@@ -157,10 +178,10 @@ def show_date_after(ctx, args):
     rows = ctx.db.query(f"SELECT * FROM transactions WHERE date >= '{date0}'")
     rows = [row for row in rows if not row[1].startswith("?")] # Exclude undefined dates
     for row in rows :
-        print(utils._format_row(row))
-    print()
+        console.print(utils._format_row(row))
+    console.print()
     print_categorized_expenses(rows)
-    print()
+    console.print()
     print_categorized_revenues(rows)
     return rows
 
@@ -187,28 +208,28 @@ def show_year(ctx, args):
 def show_entry_by_id(ctx, args):
     entry_id, = args
     transaction = DbTransaction(ctx.db.get_by_id(entry_id))
-    print(f"+-------------------------------------------------")
-    print(f"| Entry {entry_id} :")
-    print(f"|   - label : {transaction.label}")
-    print(f"|   - date  : {transaction.date}")
-    print(f"|   - amount : {transaction.amount} €")
-    print(f"|   - category : {transaction.category}")
-    print(f"|   - subcategory : {transaction.subcategory}")
-    print(f"|   - ignore : {transaction.ignore}")
-    print(f"+-------------------------------------------------")
+    console.print(f"+-------------------------------------------------")
+    console.print(f"| Entry {entry_id} :")
+    console.print(f"|   - label : {transaction.label}")
+    console.print(f"|   - date  : {transaction.date}")
+    console.print(f"|   - amount : {transaction.amount} €")
+    console.print(f"|   - category : {transaction.category}")
+    console.print(f"|   - subcategory : {transaction.subcategory}")
+    console.print(f"|   - ignore : {transaction.ignore}")
+    console.print(f"+-------------------------------------------------")
 
 def edit_entry_by_id(ctx, args):
     entry_id, = args
     transaction = DbTransaction(ctx.db.get_by_id(entry_id))
     show_entry_by_id(ctx, args)
-    print(f"| Leave fields blank to leave unchanged.")
-    print( "| New label : ")           ; updated_label       = utils.input_text("| > ").strip()
-    print( "| New date : ")            ; updated_date        = utils.input_text("| > ").strip()
-    print( "| New amount : ")          ; updated_amount      = utils.input_float("| > ", retry_message="| Must input integer.")
-    print( "| New category idx : ")    ; updated_category    = utils.input_int("| > ", retry_message="| Must input integer.")
-    print( "| New subcategory idx : ") ; updated_subcategory = utils.input_int("| > ", retry_message="| Must input integer.")
-    print( "| New ignore flag : ")     ; updated_ignore      = utils.input_int("| > ", retry_message="| Must input integer.")
-    print(f"+-------------------------------------------------")
+    console.print(f"| Leave fields blank to leave unchanged.")
+    console.print( "| New label : ")           ; updated_label       = utils.input_text("| > ").strip()
+    console.print( "| New date : ")            ; updated_date        = utils.input_text("| > ").strip()
+    console.print( "| New amount : ")          ; updated_amount      = utils.input_float("| > ", retry_message="| Must input integer.")
+    console.print( "| New category idx : ")    ; updated_category    = utils.input_int("| > ", retry_message="| Must input integer.")
+    console.print( "| New subcategory idx : ") ; updated_subcategory = utils.input_int("| > ", retry_message="| Must input integer.")
+    console.print( "| New ignore flag : ")     ; updated_ignore      = utils.input_int("| > ", retry_message="| Must input integer.")
+    console.print(f"+-------------------------------------------------")
 
     updated_label = transaction.label if updated_label == "" else updated_label
     updated_date = transaction.date if updated_date == "" else updated_date
@@ -225,20 +246,20 @@ def edit_entry_by_id(ctx, args):
     ctx.db.update_row(entry_id, "transactions", "ignore", updated_ignore)
     ctx.db.commit()
 
-    print("| Edited :")
-    print("| " + utils._format_row(ctx.db.get_by_id(entry_id)))
-    print(f"+-------------------------------------------------")
+    console.print("| Edited :")
+    console.print("| " + utils._format_row(ctx.db.get_by_id(entry_id)))
+    console.print(f"+-------------------------------------------------")
 
 def edit_buffered_entries(ctx, args=None):
     show_buffered(ctx)
-    print(f"| Leave fields blank to leave unchanged.")
-    print( "| New label : ")           ; updated_label       = utils.input_text("| > ").strip()
-    print( "| New date : ")            ; updated_date        = utils.input_text("| > ").strip()
-    print( "| New amount : ")          ; updated_amount      = utils.input_float("| > ", retry_message="| Must input integer.")
-    print( "| New category idx : ")    ; updated_category    = utils.input_int("| > ", retry_message="| Must input integer.")
-    print( "| New subcategory idx : ") ; updated_subcategory = utils.input_int("| > ", retry_message="| Must input integer.")
-    print( "| New ignore flag : ")     ; updated_ignore      = utils.input_int("| > ", retry_message="| Must input integer.")
-    print(f"+-------------------------------------------------")
+    console.print(f"| Leave fields blank to leave unchanged.")
+    console.print( "| New label : ")           ; updated_label       = utils.input_text("| > ").strip()
+    console.print( "| New date : ")            ; updated_date        = utils.input_text("| > ").strip()
+    console.print( "| New amount : ")          ; updated_amount      = utils.input_float("| > ", retry_message="| Must input integer.")
+    console.print( "| New category idx : ")    ; updated_category    = utils.input_int("| > ", retry_message="| Must input integer.")
+    console.print( "| New subcategory idx : ") ; updated_subcategory = utils.input_int("| > ", retry_message="| Must input integer.")
+    console.print( "| New ignore flag : ")     ; updated_ignore      = utils.input_int("| > ", retry_message="| Must input integer.")
+    console.print(f"+-------------------------------------------------")
     for entry in ctx.buffered:
         transaction = DbTransaction(entry)
         entry_id = transaction.id
@@ -266,8 +287,8 @@ def execute_sql_request(ctx, args):
 
 def search_text(ctx, args):
     text, = args
-    print(f"+-------------------------------------------------")
-    print(f"| Searching pattern '{text}'")
+    console.print(f"+-------------------------------------------------")
+    console.print(f"| Searching pattern '{text}'")
     idx = 1
     matches = []
     while True:
@@ -278,8 +299,8 @@ def search_text(ctx, args):
         if text.lower() in transaction.label.lower():
             matches.append(entry)
         idx += 1
-    print(f"| {len(matches)} found :")
+    console.print(f"| {len(matches)} found :")
     for match in matches:
-        print("|   " + utils._format_row(match))
-    print(f"+-------------------------------------------------")
+        console.print("|   " + utils._format_row(match))
+    console.print(f"+-------------------------------------------------")
     return matches
