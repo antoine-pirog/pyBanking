@@ -3,6 +3,7 @@ from pyBanking.utils.common import DbTransaction
 from pyBanking.cli import utils
 from pyBanking.classification import classifier
 from pyBanking.cli.console import console
+from pyBanking.cli import colors
 
 def show_buffered(ctx, args=None):
     for row in ctx.buffered :
@@ -97,33 +98,52 @@ def show_where_custom_query(ctx, args):
     print_categorized_revenues(rows)
     return rows
 
-def print_categorized_expenses(db_rows):
-    total_expenses, expenses_by_category, expenses_by_subcategory = classifier.categorize_expenses(db_rows)
-    categorized_expenses = {**expenses_by_category, **expenses_by_subcategory}
-    console.print(f"{'TOTAL EXPENSES' + ' ':#<65} {total_expenses:>8.2f} €")
-    for category_id in expenses_by_category:
-        category, _ = classifier.get_category_name(category_id*100 + 1)
-        subtotal = expenses_by_category[category_id]
-        console.print(f"{category + ' ':=<60} {subtotal:>8.2f} € ({100*subtotal/total_expenses:>5.2f}%)")
-        for subcategory_id in expenses_by_subcategory:
+def _print_categorized(db_rows, which):
+    if which == "expenses":
+        total, amount_by_category, amount_by_subcategory = classifier.categorize_expenses(db_rows)
+        title = "TOTAL EXPENSES"
+    elif which == "revenues":
+        total, amount_by_category, amount_by_subcategory = classifier.categorize_revenues(db_rows)
+        title = "TOTAL REVENUES"
+    else:
+        return
+    categorized_transactions = {**amount_by_category, **amount_by_subcategory}
+    console.print(f"[bold #00FF00]{title + ' ':#<65} {total:>8.2f} €[/]")
+    # Print inline and as bar plot
+    Nbars = 100 # width (in characters) of bar plot
+    cat_repartition_text = ""
+    subcat_repartition_text = ""
+    subcat_repartition_text_nosymbol = ""
+    for category_id in amount_by_category:
+        category, _ = classifier.get_category_properties(category_id*100 + 1)
+        subtotal = amount_by_category[category_id]
+        percentage = 100*subtotal/total
+        legend = f"[#ffffff on {category['color']}]     [/] "
+        console.print(f"{legend} {category['name'] + ' ':=<60} {subtotal:>8.2f} € [i]({percentage:>5.2f}%)[/i]")
+        for subcategory_id in amount_by_subcategory:
             if (subcategory_id // 100) == category_id :
-                _, subcategory = classifier.get_category_name(subcategory_id)
-                subtotal = expenses_by_subcategory[subcategory_id]
-                console.print(f"  - {subcategory + ' ':-<30} {subtotal:>8.2f} € ({100*subtotal/total_expenses:>5.2f}%)")
+                _, subcategory = classifier.get_category_properties(subcategory_id)
+                subtotal = amount_by_subcategory[subcategory_id]
+                percentage = 100*subtotal/total
+                color = subcategory["color"] if "color" in subcategory else colors.randomize_hex_color(category['color'])
+                symbol = subcategory["name"][0].lower()
+                legend = f"  [#ffffff on {color}] {symbol} [/] "
+                console.print(f"{legend }   - {subcategory['name'] + ' ':-<30} {subtotal:>8.2f} € [i]({percentage:>5.2f}%)[/i]")
+                cat_repartition_text    += f"[#ffffff on {category['color']}]" + (" ".center(round((percentage/100) * Nbars))) + "[/]"
+                subcat_repartition_text += f"[#ffffff on {color}]"             + (symbol.center(round((percentage/100) * Nbars))) + "[/]"
+                subcat_repartition_text_nosymbol += f"[#ffffff on {color}]"    + (" ".center(round((percentage/100) * Nbars))) + "[/]"
+    console.print()
+    console.print("-"*Nbars)
+    console.print(cat_repartition_text)
+    console.print(cat_repartition_text)
+    console.print(subcat_repartition_text)
+    console.print("-"*Nbars)
+
+def print_categorized_expenses(db_rows):
+    _print_categorized(db_rows, which="expenses")
 
 def print_categorized_revenues(db_rows):
-    total_revenues, revenues_by_category, revenues_by_subcategory = classifier.categorize_revenues(db_rows)
-    categorized_revenues = {**revenues_by_category, **revenues_by_subcategory}
-    console.print(f"{'TOTAL REVENUES' + ' ':#<65} {total_revenues:>8.2f} €")
-    for category_id in revenues_by_category:
-        category, _ = classifier.get_category_name(category_id*100 + 1)
-        subtotal = revenues_by_category[category_id]
-        console.print(f"{category + ' ':=<60} {subtotal:>8.2f} € ({100*subtotal/total_revenues:>5.2f}%)")
-        for subcategory_id in revenues_by_subcategory:
-            if (subcategory_id // 100) == category_id :
-                _, subcategory = classifier.get_category_name(subcategory_id)
-                subtotal = revenues_by_subcategory[subcategory_id]
-                console.print(f"  - {subcategory + ' ':-<30} {subtotal:>8.2f} € ({100*subtotal/total_revenues:>5.2f}%)")
+    _print_categorized(db_rows, which="revenues")
 
 def show_date_between(ctx, args):
     date0, date1 = args
