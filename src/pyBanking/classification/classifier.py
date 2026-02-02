@@ -72,3 +72,16 @@ def categorize_revenues(db_rows):
         revenues_by_category[transaction.category]       += transaction.amount
         revenues_by_subcategory[transaction.subcategory] += transaction.amount
     return revenues_total, revenues_by_category, revenues_by_subcategory
+
+def categorize_labels(db_rows, filter_amount=lambda x : x>=0):
+    transactions_total = 0
+    transactions_by_label = {}
+    for row in db_rows:
+        transaction = DbTransaction(row)
+        if not filter_amount(transaction.amount):
+            continue
+        if transaction.label not in transactions_by_label:
+            transactions_by_label[transaction.label] = 0
+        transactions_total                       += transaction.amount
+        transactions_by_label[transaction.label] += transaction.amount
+    return transactions_total, transactions_by_label

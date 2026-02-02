@@ -9,6 +9,8 @@ def _show_analytics(db_rows, args=None):
     for row in db_rows :
         console.print(utils._format_row(row))
     console.print()
+    print_categorized_labels(db_rows)
+    console.print()
     print_categorized_expenses(db_rows)
     console.print()
     print_categorized_revenues(db_rows)
@@ -94,10 +96,10 @@ def show_where_custom_query(ctx, args):
 def _print_categorized(db_rows, which):
     if which == "expenses":
         total, amount_by_category, amount_by_subcategory = classifier.categorize_expenses(db_rows)
-        title = "TOTAL EXPENSES"
+        title = "TOTAL EXPENSES BY CATEGORY"
     elif which == "revenues":
         total, amount_by_category, amount_by_subcategory = classifier.categorize_revenues(db_rows)
-        title = "TOTAL REVENUES"
+        title = "TOTAL REVENUES BY CATEGORY"
     else:
         return
     console.print(f"[bold #00FF00]{title + ' ':#<65} {total:>8.2f} €[/]")
@@ -138,6 +140,44 @@ def print_categorized_expenses(db_rows):
 
 def print_categorized_revenues(db_rows):
     _print_categorized(db_rows, which="revenues")
+
+def print_categorized_labels(db_rows):
+    total_positive, amount_by_label_positive = classifier.categorize_labels(db_rows, filter_amount=lambda x : x >= 0)
+    total_negative, amount_by_label_negative = classifier.categorize_labels(db_rows, filter_amount=lambda x : x < 0)
+    total_net = total_positive + total_negative
+    max_amount = max(abs(total_positive), abs(total_negative))
+    title = "NET TOTAL BY LABEL"
+    color = "#00FF00" if total_net >= 0 else "#FF0000"
+    console.print(f"[bold #00FFFF]{title + ' ':#<65} [{color}]{total_net:>8.2f} €[/{color}][/]")
+    # Print inline and as bar plot
+    Nbars = 100 # width (in characters) of bar plot
+    label_repartition_positive_text = ""
+    label_repartition_negative_text = ""
+    for label in amount_by_label_positive:
+        subtotal = amount_by_label_positive[label]
+        percentage = 100*abs(subtotal)/abs(max_amount)
+        color = colors.get_random_color()
+        symbol = label[0].lower()
+        legend = f"[#ffffff on {color}]  " + symbol + "  [/] "
+        console.print(f"{legend} [#ffffff]{label + ' ':=<55} [bold]{subtotal:>8.2f} €[/bold] [i]({percentage:>5.2f}%)[/]")
+        bars_to_print = round((percentage/100) * Nbars)
+        if bars_to_print > 0:
+            label_repartition_positive_text += f"[#ffffff on {color}]" + (symbol.center(bars_to_print)) + "[/]"
+    for label in amount_by_label_negative:
+        subtotal = amount_by_label_negative[label]
+        percentage = 100*abs(subtotal)/abs(max_amount)
+        color = colors.get_random_color()
+        symbol = label[0].lower()
+        legend = f"[#ffffff on {color}]  " + symbol + "  [/] "
+        console.print(f"{legend} [#ffffff]{label + ' ':=<55} [bold]{subtotal:>8.2f} €[/bold] [i]({percentage:>5.2f}%)[/]")
+        bars_to_print = round((percentage/100) * Nbars)
+        if bars_to_print > 0:
+            label_repartition_negative_text += f"[#ffffff on {color}]" + (symbol.center(bars_to_print)) + "[/]"
+    console.print()
+    console.print("-----------" + "-"*Nbars)
+    console.print("[bold #00ff00]Positive[/] : " + label_repartition_positive_text)
+    console.print("[bold #ff0000]Negative[/] : " + label_repartition_negative_text)
+    console.print("-----------" + "-"*Nbars)
 
 def show_date_between(ctx, args):
     date0, date1 = args
