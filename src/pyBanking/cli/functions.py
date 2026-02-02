@@ -100,7 +100,6 @@ def _print_categorized(db_rows, which):
         title = "TOTAL REVENUES"
     else:
         return
-    categorized_transactions = {**amount_by_category, **amount_by_subcategory}
     console.print(f"[bold #00FF00]{title + ' ':#<65} {total:>8.2f} €[/]")
     # Print inline and as bar plot
     Nbars = 100 # width (in characters) of bar plot
@@ -122,9 +121,11 @@ def _print_categorized(db_rows, which):
                 symbol = subcategory["name"][0].lower()
                 legend = f"  [#ffffff on {color}] {symbol} [/] "
                 console.print(f"{legend }   - {subcategory['name'] + ' ':-<30} {subtotal:>8.2f} € [i]({percentage:>5.2f}%)[/i]")
-                cat_repartition_text    += f"[#ffffff on {category['color']}]" + (" ".center(round((percentage/100) * Nbars))) + "[/]"
-                subcat_repartition_text += f"[#ffffff on {color}]"             + (symbol.center(round((percentage/100) * Nbars))) + "[/]"
-                subcat_repartition_text_nosymbol += f"[#ffffff on {color}]"    + (" ".center(round((percentage/100) * Nbars))) + "[/]"
+                bars_to_print = round((percentage/100) * Nbars)
+                if bars_to_print > 0:
+                    cat_repartition_text    += f"[#ffffff on {category['color']}]" + (" ".center(bars_to_print)) + "[/]"
+                    subcat_repartition_text += f"[#ffffff on {color}]"             + (symbol.center(bars_to_print)) + "[/]"
+                    subcat_repartition_text_nosymbol += f"[#ffffff on {color}]"    + (" ".center(bars_to_print)) + "[/]"
     console.print()
     console.print("-"*Nbars)
     console.print(cat_repartition_text)
