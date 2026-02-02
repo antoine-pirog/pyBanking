@@ -5,14 +5,17 @@ from pyBanking.classification import classifier
 from pyBanking.cli.console import console
 from pyBanking.cli import colors
 
-def show_buffered(ctx, args=None):
-    for row in ctx.buffered :
+def _show_analytics(db_rows, args=None):
+    for row in db_rows :
         console.print(utils._format_row(row))
     console.print()
-
-    print_categorized_expenses(ctx.buffered)
+    print_categorized_expenses(db_rows)
     console.print()
-    print_categorized_revenues(ctx.buffered)
+    print_categorized_revenues(db_rows)
+
+
+def show_buffered(ctx, args=None):
+    _show_analytics(ctx.buffered, args=args)
 
 def show_uncategorized(ctx, args=None):
     console.print("=================================================")
@@ -78,24 +81,14 @@ def show_categories(ctx, args=None):
 
 def show_all(ctx, args=None):
     rows = ctx.db.query(f"SELECT * FROM transactions")
-    for row in rows :
-        console.print(utils._format_row(row))
-    console.print()
-    print_categorized_expenses(rows)
-    console.print()
-    print_categorized_revenues(rows)
+    _show_analytics(rows, args=args)
     return rows
 
 def show_where_custom_query(ctx, args):
     query, = args
     query = re.compile(r"(\d{1,2})-(\d{1,2})-(\d{4})").sub(r"'\3-\2-\1'", query)
     rows = ctx.db.query(f"SELECT * FROM transactions WHERE {query}")
-    for row in rows :
-        console.print(utils._format_row(row))
-    console.print()
-    print_categorized_expenses(rows)
-    console.print()
-    print_categorized_revenues(rows)
+    _show_analytics(rows, args=args)
     return rows
 
 def _print_categorized(db_rows, which):
@@ -119,7 +112,7 @@ def _print_categorized(db_rows, which):
         subtotal = amount_by_category[category_id]
         percentage = 100*subtotal/total
         legend = f"[#ffffff on {category['color']}]     [/] "
-        console.print(f"{legend} {category['name'] + ' ':=<60} {subtotal:>8.2f} € [i]({percentage:>5.2f}%)[/i]")
+        console.print(f"{legend} [#ffffff]{category['name'] + ' ':=<55} [bold]{subtotal:>8.2f} €[/bold] [i]({percentage:>5.2f}%)[/]")
         for subcategory_id in amount_by_subcategory:
             if (subcategory_id // 100) == category_id :
                 _, subcategory = classifier.get_category_properties(subcategory_id)
@@ -151,12 +144,7 @@ def show_date_between(ctx, args):
     date1 = "-".join(date1.split("-")[::-1])
     rows = ctx.db.query(f"SELECT * FROM transactions WHERE date >= '{date0}' AND date <= '{date1}'")
     rows = [row for row in rows if not row[1].startswith("?")] # Exclude undefined dates
-    for row in rows :
-        console.print(utils._format_row(row))
-    console.print()
-    print_categorized_expenses(rows)
-    console.print()
-    print_categorized_revenues(rows)
+    _show_analytics(rows, args=args)
     return rows
 
 def show_date_before(ctx, args):
@@ -164,12 +152,7 @@ def show_date_before(ctx, args):
     date0 = "-".join(date0.split("-")[::-1])
     rows = ctx.db.query(f"SELECT * FROM transactions WHERE date <= '{date0}'")
     rows = [row for row in rows if not row[1].startswith("?")] # Exclude undefined dates
-    for row in rows :
-        console.print(utils._format_row(row))
-    console.print()
-    print_categorized_expenses(rows)
-    console.print()
-    print_categorized_revenues(rows)
+    _show_analytics(rows, args=args)
     return rows
 
 def show_date_after(ctx, args):
@@ -177,12 +160,7 @@ def show_date_after(ctx, args):
     date0 = "-".join(date0.split("-")[::-1])
     rows = ctx.db.query(f"SELECT * FROM transactions WHERE date >= '{date0}'")
     rows = [row for row in rows if not row[1].startswith("?")] # Exclude undefined dates
-    for row in rows :
-        console.print(utils._format_row(row))
-    console.print()
-    print_categorized_expenses(rows)
-    console.print()
-    print_categorized_revenues(rows)
+    _show_analytics(rows, args=args)
     return rows
 
 def show_month(ctx, args):
