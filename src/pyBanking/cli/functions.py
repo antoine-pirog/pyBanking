@@ -14,6 +14,8 @@ def _show_analytics(db_rows, args=None):
     print_categorized_expenses(db_rows)
     console.print()
     print_categorized_revenues(db_rows)
+    console.print()
+    print_monthly_net(db_rows)
 
 
 def show_buffered(ctx, args=None):
@@ -179,6 +181,32 @@ def print_categorized_labels(db_rows):
     console.print("[bold #00ff00]Positive[/] : " + label_repartition_positive_text)
     console.print("[bold #ff0000]Negative[/] : " + label_repartition_negative_text)
     console.print("-----------" + "-"*Nbars)
+
+def print_monthly_net(db_rows):
+    # List months
+    months = set()
+    re_month = re.compile(r"(\d{4}-\d{2})-\d{2}")
+    for row in db_rows:
+        transaction = DbTransaction(row)
+        month = re_month.match(transaction.date)
+        if month:
+            months.add(month.group(1))
+    months = sorted(list(months))
+    # Fetch monthly net
+    monthly_net = {}
+    for month in months:
+        net = 0
+        net_ignore_savings = 0
+        for row in db_rows:
+            transaction = DbTransaction(row)
+            if f"{month}-01" <= transaction.date <= f"{month}-31":
+                net += transaction.amount
+        monthly_net[month] = net
+    # Print report
+    console.print(f"[bold #00FF00]{'MONTHLY NET' + ' ':#<65}[/]")
+    console.print(f"| [b]YYYY-MM | {'net':>10} € |[/b]")
+    for month in monthly_net:
+        console.print(f"[bold]| [yellow]{month}[/yellow] |[/bold] {monthly_net[month]:>10.2f} € |")
 
 def show_date_between(ctx, args):
     date0, date1 = args
