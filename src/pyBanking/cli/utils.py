@@ -4,9 +4,13 @@ from pyBanking.classification import classifier
 def _format_row(db_row):
     transaction = DbTransaction(db_row)
     category, subcategory = classifier.get_category_name(transaction.subcategory)
-    if len(transaction.label) > 50:
-        transaction.label = transaction.label[:47] + "..."
+    transaction.label = shorten(transaction.label, 50)
     return f"[[yellow]{transaction.id:>5}[/]] {transaction.date} : {transaction.label:-<50} {transaction.amount:>8.2f} € - [grey50]({transaction.subcategory}) {category} / {subcategory}[/]"
+
+def shorten(string, length=50):
+    if len(string) > length:
+        string = string[:(length-3)] + "..."
+    return string
 
 def input_text(prompt):
     return input(prompt)

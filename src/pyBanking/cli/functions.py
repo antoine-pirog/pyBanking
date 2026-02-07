@@ -169,7 +169,8 @@ def print_categorized_labels(db_rows):
         color = colors.get_random_color()
         symbol = label[0].lower()
         legend = f"[#ffffff on {color}]  " + symbol + "  [/] "
-        console.print(f"{legend} [#ffffff]{label + ' ':=<55} [bold]{subtotal:>8.2f} €[/bold] [i]({percentage:>5.2f}%)[/]")
+        short_label = utils.shorten(label, 50)
+        console.print(f"{legend} [#ffffff]{short_label + ' ':=<55} [bold]{subtotal:>8.2f} €[/bold] [i]({percentage:>5.2f}%)[/]")
         bars_to_print = round((percentage/100) * Nbars)
         if bars_to_print > 0:
             label_repartition_negative_text += f"[#ffffff on {color}]" + (symbol.center(bars_to_print)) + "[/]"
