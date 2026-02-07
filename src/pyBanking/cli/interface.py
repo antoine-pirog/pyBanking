@@ -15,9 +15,9 @@ intro_message += f"================================================\n"
 
 def cmd_lookup(ctx, command):
     regexes = {
+        r"list categories" : functions.show_categories,
         r"show all" : functions.show_all,
         r"show where +(.+)" : functions.show_where_custom_query,
-        r"show categories" : functions.show_categories,
         r"show uncategorized" : functions.show_uncategorized,
         r"show date +between +(\d{1,2}-\d{1,2}-\d{4}):(\d{1,2}-\d{1,2}-\d{4})" : functions.show_date_between,
         r"show date +before +(\d{1,2}-\d{1,2}-\d{4})" : functions.show_date_before,
@@ -55,7 +55,6 @@ class CLI(cmd.Cmd):
             | Supported commands :
             | - show all
             | - show uncategorized
-            | - show categories
             | - show date after <dd-mm-yyyy> 
             |   > ex. : show date after 01-01-2024
             | - show date before <dd-mm-yyyy>
@@ -74,6 +73,12 @@ class CLI(cmd.Cmd):
             |     - subcategory (int)
             |     - ignore (int)"""
         cmd_lookup(self.context, f"show {line}")
+    
+    def do_list(self, line):
+        """ Prints list of elements
+            | Supported commands :
+            | - list categories"""
+        cmd_lookup(self.context, f"list {line}")
     
     def do_edit(self, line):
         """ Edits a database entry
